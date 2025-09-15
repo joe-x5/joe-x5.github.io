@@ -19,3 +19,8 @@
 
 
 ## X0 Store KaiOS & X0 All KaiOS 
+| x0.rf.gd/a/x0-all/ | [http://store.x0.rf.gd](https://x0allkaios.blogspot.com/) |
+------------
+| store.x0.rf.gd | [http://store.x0.rf.gd](https://x0storekaios.blogspot.com/) |
+------------
+
