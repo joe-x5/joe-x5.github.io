@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>KaiOS Video Call </title>
+<style>
+body {
+  background: black;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+}
+
+
+header {  
+  background-color: transparent;
+  color: white;  
+  text-align: center;  
+  padding: 8px;  
+  font-size: 14px;  
+  font-weight: bold;  
+  position: fixed;  
+  top: 0;  
+  width: 100%;  
+  z-index: 10;  
+} 
+
+#remoteVideo {
+  width: 95%;
+  height: 90vh;
+  
+margin: 5px;
+  display: block;
+  background: #222;
+  border: 1px solid skyblue;  /* Add border to remote video */
+  border-radius: 8px;
+  position: relative;  /* Needed for positioning inside */
+}
+
+#localVideo {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 50px;
+  height: 60px;
+  border: 1px solid white;
+  border-radius: 8px;
+  z-index: 2;
+  background: black;
+flex-direction: column;
+}
+
+#controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#controls button {
+  width: 25px;  /* Small button size */
+  height: 25px;
+  font-size: 14px;
+margin: 2px;
+  border: 1px solid white;
+  border-radius: 50%;
+  background: #0a84ff;
+  color: white;
+  display: flex;
+padding: 2px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;  /* Smooth animation */
+}
+
+#controls button:hover {
+  background: #007aff;  /* Darker blue on hover */
+  transform: scale(1.1);  /* Slightly increase size */
+}
+
+#controls button:active {
+  transform: scale(0.9);  /* Button click effect: shrink slightly */
+}
+
+#controls button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+</style>
+
+<style>
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: white;
+    margin: 4px 0;
+  }
+
+  .dot {
+    height: 10px;
+    width: 10px;
+    margin-left: 6px;
+    border-radius: 50%;
+    background-color: red; /* default */
+  }
+
+  .dot.green {
+    background-color: limegreen;
+  }
+
+  .dot.red {
+    background-color: red;
+  }
+</style>
+
+
+
+</head>
+<body>
+  <header>KaiOS VCall<div class="status-indicator">
+  <span id="onlineDot" class="dot red"></span>
+</div>
+</header>
+  
+  <video id="remoteVideo" autoplay playsinline></video>
+<video id="localVideo" autoplay muted playsinline></video>
+
+<div id="controls">
+  <button id="startCall">📞</button>
+  <button id="endCall" disabled>❌</button>
+</div>
+
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    // Your Firebase config here:
+    
+const firebaseConfig = {
+  apiKey: "AIzaSyCw6kipqOC6BeOSQND33ia80FDKpq7Qj3k",
+  authDomain: "vcall-3e903.firebaseapp.com",
+  databaseURL: "https://vcall-3e903-default-rtdb.firebaseio.com",
+  projectId: "vcall-3e903",
+  storageBucket: "vcall-3e903.firebasestorage.app",
+  messagingSenderId: "1048023205791",
+  appId: "1:1048023205791:web:41146a31a042c1711fdfaa",
+  measurementId: "G-Q7YW97NRDE"
+};
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Legacy WebRTC support (KaiOS friendly)
+    const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+    const getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+
+    let localStream = null;
+    let peerConnection = null;
+
+    const servers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+    const startBtn = document.getElementById('startCall');
+    const endBtn = document.getElementById('endCall');
+
+    // Using a fixed call ID for testing - change for multi-user support
+    const callId = "testCallRoom";
+
+    // Reference paths in Firebase
+    const offerRef = db.ref('calls/' + callId + '/offer');
+    const answerRef = db.ref('calls/' + callId + '/answer');
+    const candidatesRef = db.ref('calls/' + callId + '/candidates');
+
+    function setupPeerConnection() {
+      peerConnection = new RTCPeerConnection(servers);
+
+      // Add local stream to connection
+      peerConnection.addStream(localStream);
+
+      // When remote stream arrives, show it
+      peerConnection.onaddstream = (event) => {
+        remoteVideo.srcObject = event.stream;
+      };
+
+      // When new ICE candidate is found, send it to Firebase
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate) {
+          candidatesRef.push(JSON.stringify(event.candidate));
+        }
+      };
+
+      // Listen for remote ICE candidates from Firebase
+      candidatesRef.on('child_added', (snapshot) => {
+        const candidate = new RTCIceCandidate(JSON.parse(snapshot.val()));
+        peerConnection.addIceCandidate(candidate).catch(e => console.warn(e));
+      });
+    }
+
+    startBtn.onclick = () => {
+      startBtn.disabled = true;
+
+      if (!getUserMedia) {
+        alert('Camera/microphone not supported on this device.');
+        startBtn.disabled = false;
+        return;
+      }
+
+      getUserMedia.call(navigator, { video: true, audio: true },
+        (stream) => {
+          localStream = stream;
+          localVideo.srcObject = stream;
+
+          setupPeerConnection();
+
+          // Create offer
+          peerConnection.createOffer().then(offer => {
+            peerConnection.setLocalDescription(offer);
+            offerRef.set(JSON.stringify(offer));
+          }).catch(e => {
+            alert('Failed to create offer: ' + e.message);
+            startBtn.disabled = false;
+          });
+
+          // Listen for answer from remote peer
+          answerRef.on('value', (snapshot) => {
+            const answer = snapshot.val();
+            if (answer) {
+              const answerDesc = new RTCSessionDescription(JSON.parse(answer));
+              peerConnection.setRemoteDescription(answerDesc);
+              endBtn.disabled = false;
+            }
+          });
+        },
+        (err) => {
+          alert('Could not access camera/microphone: ' + err.message);
+          startBtn.disabled = false;
+        });
+    };
+
+    endBtn.onclick = () => {
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+      }
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+      localVideo.srcObject = null;
+      remoteVideo.srcObject = null;
+
+      // Clear Firebase signaling data
+      offerRef.remove();
+      answerRef.remove();
+      candidatesRef.remove();
+
+      startBtn.disabled = false;
+      endBtn.disabled = true;
+    };
+
+    // Listen for offer and answer for second peer (optional, for answering side)
+    offerRef.on('value', (snapshot) => {
+      const offer = snapshot.val();
+      if (offer && !peerConnection) {
+        // Someone started a call, so answer it
+        if (!getUserMedia) return;
+        getUserMedia.call(navigator, { video: true, audio: true },
+          (stream) => {
+            localStream = stream;
+            localVideo.srcObject = stream;
+
+            setupPeerConnection();
+
+            const offerDesc = new RTCSessionDescription(JSON.parse(offer));
+            peerConnection.setRemoteDescription(offerDesc).then(() => {
+              peerConnection.createAnswer().then(answer => {
+                peerConnection.setLocalDescription(answer);
+                answerRef.set(JSON.stringify(answer));
+                endBtn.disabled = false;
+              });
+            });
+
+          },
+          (err) => alert('Camera/mic error: ' + err.message));
+      }
+    });
+
+  </script>
+
+
+<script>
+  const userId = "user_" + Math.floor(Math.random() * 100000);
+  const userStatusRef = db.ref("presence/" + userId);
+
+  firebase.database().ref(".info/connected").on("value", function(snapshot) {
+    if (snapshot.val() === true) {
+      userStatusRef.set(true);
+      userStatusRef.onDisconnect().remove();
+    }
+  });
+
+  firebase.database().ref("presence").on("value", function(snapshot) {
+    const count = snapshot.numChildren();
+    const dot = document.getElementById("onlineDot");
+
+    if (dot) {
+      if (count >= 2) {
+        dot.classList.remove("red");
+        dot.classList.add("green");
+      } else {
+        dot.classList.remove("green");
+        dot.classList.add("red");
+      }
+    }
+  });
+</script>
+
+
+
+</body>
+</html>
