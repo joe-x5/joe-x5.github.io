@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiki Game KaiOS - Multiplayer</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background: linear-gradient(to bottom, #6a11cb, #2575fc);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      min-height: 320px;
+      min-width: 240px;
+      overflow: auto;
+    }
+
+    h1 {
+      font-size: 20px;
+      padding: 10px;
+      margin: 0;
+      background: #333;
+      color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    header {
+      padding: 5px;
+      background: #444;
+      color: #fff;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #game-container,
+    #waiting-screen,
+    #end-screen {
+      display: none;
+      padding: 15px;
+    }
+
+    #join-game {
+      margin-top: 10px;
+    }
+
+    #join-game input {
+      width: 90%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    #join-game button,
+    #play-again-button,
+    #home-button,
+    #cancel-button {
+      display: inline-block;
+      background: linear-gradient(45deg, #ff5722, #ff9800);
+      color: #fff;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #join-game button:hover,
+    #play-again-button:hover,
+    #home-button:hover,
+    #cancel-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+    }
+
+    td {
+      width: 50px;
+      height: 50px;
+      border: 2px solid #333;
+      font-size: 20px;
+      text-align: center;
+      vertical-align: middle;
+      background: #fff;
+      color: #444;
+      cursor: pointer;
+      margin: 2px;
+      border-radius: 10px;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    td:hover {
+      background: #f3f3f3;
+      transform: scale(1.05);
+    }
+
+    td.taken {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    #messages {
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    #vs-display {
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    #current-turn {
+      font-size: 16px;
+      color: #ffeb3b;
+    }
+
+    #end-screen {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #ff5722;
+    }
+
+    #timer {
+      color: #03a9f4;
+      font-weight: bold;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 8px 0;
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .softkey {
+      padding: 0 15px;
+      font-weight: bold;
+    }
+
+    button:focus {
+      outline: 3px solid #03a9f4;
+    }
+    
+    .chat-popup {
+      position: fixed;
+      bottom: 20px;
+      right: 10px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      max-width: 80%;
+      display: none;
+      animation: fadeIn 0.3s;
+    }
+    
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    }
+
+    /* Chat Popup Styles */
+    .chat-popup {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  function showAd() {
+    getKaiAd({
+      publisher: "58d21092-87f8-47c3-883d-fcd67eb318d8",
+      app: "tikigamex0",
+      slot: "tikigamex0_slot",
+      onerror: e => {},
+      onready: e => { e.call("display"); }
+    });
+  }
+
+  // Show the ad immediately when the page loads
+  showAd();
+
+  // Show the ad every 2 minutes (120,000 milliseconds)
+  setInterval(showAd, 120000);
+</script>
+
+<script src="/kaiads.v5.min.js"></script>
+
+
+
+  <div class="container">
+    <h1>Tiki Game (Multiplayer)</h1>
+    <div id="join-game">
+      <input type="text" id="player-name" placeholder="Enter your name" />
+      <button id="play-button">Play</button>
+      <button id="cancel-button" style="display: none;">Cancel</button>
+      <br>
+      <p> Press SoftRight Button To Exit From Apps.</p>
+    </div>
+
+    <div id="waiting-screen">
+      <h2>Waiting for another player...</h2>
+      <p id="timer">Removing in 30 seconds...</p>
+      <br>
+      <p> Press SoftRight Button To Exit From Apps.</p>
+
+<script>
+  function showAd() {
+    getKaiAd({
+      publisher: "58d21092-87f8-47c3-883d-fcd67eb318d8",
+      app: "tikigamex0",
+      slot: "tikigamex0_slot",
+      onerror: e => {},
+      onready: e => { e.call("display"); }
+    });
+  }
+
+  // Show the ad immediately when the page loads
+  showAd();
+
+  // Show the ad every 2 minutes (120,000 milliseconds)
+  setInterval(showAd, 120000);
+</script>
+
+<script src="/kaiads.v5.min.js"></script>
+
+
+
+    </div>
+
+    <div id="game-container">
+      <div id="vs-display"></div>
+      <div id="current-turn"></div>
+      <table id="game-board">
+        <tr>
+          <td data-cell="0"></td>
+          <td data-cell="1"></td>
+          <td data-cell="2"></td>
+        </tr>
+        <tr>
+          <td data-cell="3"></td>
+          <td data-cell="4"></td>
+          <td data-cell="5"></td>
+        </tr>
+        <tr>
+          <td data-cell="6"></td>
+          <td data-cell="7"></td>
+          <td data-cell="8"></td>
+        </tr>
+      </table>
+      <div id="messages"></div>
+      <div class="chat-section">
+        <input type="text" id="chat-input" placeholder="Type message..." style="width:70%;padding:8px;border-radius:15px;border:none;margin:10px 0;">
+        <button id="send-chat" style="padding:8px 15px;background:#ff5722;color:white;border:none;border-radius:15px;">Send</button>
+      </div>
+<script>
+  function showAd() {
+    getKaiAd({
+      publisher: "58d21092-87f8-47c3-883d-fcd67eb318d8",
+      app: "tikigamex0",
+      slot: "tikigamex0_slot",
+      onerror: e => {},
+      onready: e => { e.call("display"); }
+    });
+  }
+
+  // Show the ad immediately when the page loads
+  showAd();
+
+  // Show the ad every 2 minutes (120,000 milliseconds)
+  setInterval(showAd, 120000);
+</script>
+
+<script src="/kaiads.v5.min.js"></script>
+
+
+
+      <div class="chat-popup" id="chat-popup"></div>
+    </div>
+
+    <div id="end-screen">
+      <div id="end-message"></div>
+      <div id="end-buttons">
+        <button id="play-again-button">Play Again</button>
+        <button id="restart-button">Restart</button>  
+        <button id="bye-button">Bye Bye</button>
+        <button id="wait-button">Wait</button>
+      </div>
+    </div>
+
+    
+  </div>
+  <footer>
+    <div class="softkey" onclick="sendKeyPress6577gt('SoftLeft')">Chat</div>
+    <div class="softkey">Play</div>
+    <div class="softkey" onclick="sendKeyPress6577gt('SoftRight')">Exit</div>
+  </footer>
+
+<script>
+function sendKeyPress6577gt(key) {
+        let event = new KeyboardEvent("keydown", { key: key });
+        document.dispatchEvent(event);
+        setTimeout(() => {
+            document.dispatchEvent(new KeyboardEvent("keyup", { key: key }));
+        }, 100);
+    }
+</script>
+    
+
+<script>
+  function showAd() {
+    getKaiAd({
+      publisher: "58d21092-87f8-47c3-883d-fcd67eb318d8",
+      app: "tikigamex0",
+      slot: "tikigamex0_slot",
+      onerror: e => {},
+      onready: e => { e.call("display"); }
+    });
+  }
+
+  // Show the ad immediately when the page loads
+  showAd();
+
+  // Show the ad every 2 minutes (120,000 milliseconds)
+  setInterval(showAd, 120000);
+</script>
+
+<script src="/kaiads.v5.min.js"></script>
+
+
+
+
+<div class="chat-popup" id="chat-popup"></div>
+
+
+
+
+  <script src="firebase-app.js"></script>
+  <script src="firebase-database.js"></script>
+  <script>
+    // Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAsnw4xTOLGa6IZCnSVUlnDCJsd5dJIDO8",
+      authDomain: "tiki-game-3ca60.firebaseapp.com",
+      databaseURL: "https://tiki-game-3ca60-default-rtdb.firebaseio.com",
+      projectId: "tiki-game-3ca60",
+      storageBucket: "tiki-game-3ca60.firebasestorage.app",
+      messagingSenderId: "474597840938",
+      appId: "1:474597840938:web:8cdc5956f29c93d09c0b53",
+      measurementId: "G-TXPKDHQZH1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    var database = firebase.database();
+
+    var joinGameDiv = document.getElementById("join-game");
+    var waitingScreen = document.getElementById("waiting-screen");
+    var gameContainer = document.getElementById("game-container");
+    var playButton = document.getElementById("play-button");
+    var cancelButton = document.getElementById("cancel-button");
+    var playerNameInput = document.getElementById("player-name");
+    var gameBoard = document.getElementById("game-board");
+    var messages = document.getElementById("messages");
+    var chatInput = document.getElementById("chat-input");
+    var sendChatButton = document.getElementById("send-chat");
+    var chatPopup = document.getElementById("chat-popup");
+    var timer = document.getElementById("timer");
+    var vsDisplay = document.getElementById("vs-display");
+    var currentTurnDisplay = document.getElementById("current-turn");
+    var endScreen = document.getElementById("end-screen");
+    var endMessage = document.getElementById("end-message");
+    var playAgainButton = document.getElementById("play-again-button");
+    var homeButton = document.getElementById("home-button");
+
+    var playerName = "";
+    var opponentName = "";
+    var playerSymbol = "";
+    var currentPlayer = "";
+    var timeoutId;
+    var gameActive = true;
+
+    var playersRef = database.ref("tic-tac-toe/players");
+    var gameRef = database.ref("tic-tac-toe/game");
+    var playAgainRef = database.ref("tic-tac-toe/game/play-again");
+    var chatRef = database.ref("tic-tac-toe/chat");
+    
+    // Initialize chat elements
+    var chatInput = document.getElementById('chat-input');
+    var chatPopup = document.getElementById('chat-popup');
+    var sendChatBtn = document.getElementById('send-chat');
+    var chatRef = database.ref("tic-tac-toe/chat");
+
+    // Save & Load from localStorage
+    window.onload = () => {
+      const savedName = localStorage.getItem("username");
+      if (savedName) {
+        playerNameInput.value = savedName;
+      }
+    };
+
+    // Handle Enter key
+    playerNameInput.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") {
+        playButton.click();
+      }
+    });
+
+    playButton.onclick = function () {
+      playerName = playerNameInput.value.trim();
+      if (!playerName) {
+        alert("Please enter your name");
+        return;
+      }
+
+      localStorage.setItem("username", playerName);
+
+      joinGameDiv.style.display = "none";
+      waitingScreen.style.display = "block";
+      cancelButton.style.display = "inline";
+
+      var playerData = {
+        name: playerName,
+        symbol: "X",
+      };
+
+      playersRef.child(playerName).set(playerData);
+
+      timeoutId = setTimeout(function () {
+        playersRef.child(playerName).remove();
+        alert("No match found. You have been removed from the list.");
+        waitingScreen.style.display = "none";
+        joinGameDiv.style.display = "block";
+        cancelButton.style.display = "none";
+      }, 30000);
+
+      playersRef.on("value", function (snapshot) {
+        var players = snapshot.val();
+        if (!players || Object.keys(players).length < 2) return;
+
+        var playerKeys = Object.keys(players);
+        var player1 = playerKeys[0];
+        var player2 = playerKeys[1];
+
+        if (player1 === playerName || player2 === playerName) {
+          clearTimeout(timeoutId);
+          opponentName = player1 === playerName ? players[player2].name : players[player1].name;
+          playerSymbol = player1 === playerName ? "X" : "O";
+
+          gameRef.set({
+            board: ["", "", "", "", "", "", "", "", ""],
+            turn: "X",
+            players: [player1, player2],
+          });
+
+          waitingScreen.style.display = "none";
+          gameContainer.style.display = "block";
+          vsDisplay.textContent = playerName + " VS " + opponentName;
+
+          playersRef.remove();
+        }
+      });
+    };
+
+    cancelButton.onclick = function () {
+      playersRef.child(playerName).remove();
+      clearTimeout(timeoutId);
+      waitingScreen.style.display = "none";
+      joinGameDiv.style.display = "block";
+      cancelButton.style.display = "none";
+    };
+
+    gameRef.on("value", function (snapshot) {
+      var data = snapshot.val();
+      if (!data) return;
+
+      currentPlayer = data.turn;
+      var board = data.board;
+
+      var cells = gameBoard.getElementsByTagName("td");
+      for (var i = 0; i < cells.length; i++) {
+        cells[i].textContent = board[i];
+        cells[i].className = board[i] ? "taken" : "";
+      }
+
+      currentTurnDisplay.textContent =
+        currentPlayer === playerSymbol ? "Your Turn" : opponentName + "'s Turn";
+
+      var winner = checkWinner(board);
+      if (winner) {
+        var winnerName = winner === "X" ? playerName : opponentName;
+        endMessage.textContent =
+          winner === "Draw"
+            ? "It's a draw!"
+            : winnerName + " wins!";
+        endScreen.style.display = "block";
+        gameContainer.style.display = "none";
+        playAgainButton.style.display = "inline";
+        homeButton.style.display = "inline";
+
+        // Show winner's name on both players' screens
+        vsDisplay.textContent = winnerName + " wins!";
+      }
+    });
+
+    gameBoard.onclick = function (event) {
+      var target = event.target;
+      if (target.tagName !== "TD" || target.className === "taken" || currentPlayer !== playerSymbol) {
+        return;
+      }
+
+      var cellIndex = target.getAttribute("data-cell");
+      gameRef.child("board").child(cellIndex).set(playerSymbol);
+      gameRef.child("turn").set(playerSymbol === "X" ? "O" : "X");
+    };
+
+    sendChatButton.onclick = function () {
+      var message = chatInput.value.trim();
+      if (message) {
+        chatRef.push({
+          player: playerName,
+          message: message,
+        });
+        chatInput.value = ""; // Clear input
+      }
+    };
+
+    chatRef.on("child_added", function (snapshot) {
+      var chatData = snapshot.val();
+      showChatPopup(chatData.player + ": " + chatData.message);
+    });
+
+    function showChatPopup(message) {
+      chatPopup.textContent = message;
+      chatPopup.style.display = "block";
+      setTimeout(() => {
+        chatPopup.style.display = "none";
+      }, 3000); // Hide after 3 seconds
+    }
+
+    playAgainButton.onclick = function () {
+      if (gameActive) {
+        playAgainRef.set({
+          inviter: playerName,
+          invitee: opponentName,
+          status: "pending",
+        });
+
+        gameActive = false; // Prevent multiple invites
+        endMessage.textContent = "Invitation sent to " + opponentName + "...";
+      }
+
+      playAgainRef.on("value", function (snapshot) {
+        var data = snapshot.val();
+        if (!data) return;
+
+        if (data.invitee === playerName && data.status === "pending") {
+          var confirmed = confirm(data.inviter + " wants to play again. Do you accept?");
+          playAgainRef.set({
+            inviter: data.inviter,
+            invitee: data.invitee,
+            status: confirmed ? "accepted" : "declined",
+          });
+        } else if (data.status === "accepted") {
+          resetGame();
+        } else if (data.status === "declined" && data.inviter === playerName) {
+          endMessage.textContent = opponentName + " declined your Play Again request.";
+        }
+      });
+    };
+
+    homeButton.onclick = function () {
+      endScreen.style.display = "none";
+      joinGameDiv.style.display = "block";
+    };
+
+    function checkWinner(board) {
+      const winningCombinations = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+
+      for (var i = 0; i < winningCombinations.length; i++) {
+        var [a, b, c] = winningCombinations[i];
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return board[a];
+        }
+      }
+      return board.includes("") ? null : "Draw";
+    }
+
+    // Chat functionality
+    sendChatBtn.onclick = function() {
+      const message = chatInput.value.trim();
+      if (message && playerName) {
+        chatRef.push({
+          player: playerName,
+          message: message,
+          timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+        chatInput.value = '';
+      }
+    };
+
+    chatRef.on('child_added', function(snapshot) {
+      const chatData = snapshot.val();
+      showChatPopup(`${chatData.player}: ${chatData.message}`);
+    });
+
+    function showChatPopup(text) {
+      chatPopup.textContent = text;
+      chatPopup.style.display = 'block';
+      setTimeout(() => {
+        chatPopup.style.display = 'none';
+      }, 3000);
+    }
+
+    // New button handlers
+    document.getElementById('bye-button').onclick = function() {
+      if(confirm("Are you sure you don't want to play anymore?")) {
+        gameRef.remove();
+        endScreen.style.display = "none";
+        joinGameDiv.style.display = "block";
+      }
+    };
+    
+    document.getElementById('wait-button').onclick = function() {
+      alert("Waiting for opponent...");
+    };
+
+    document.getElementById('restart-button').onclick = function() {
+      resetGame();
+    };
+
+    function resetGame() {
+      firebase.database().ref("tic-tac-toe/game").set({
+        board: ["", "", "", "", "", "", "", "", ""],
+        turn: "X",
+        players: [playerName, opponentName],
+      });
+
+      endScreen.style.display = "none";
+      gameContainer.style.display = "block";
+      gameActive = true;
+    }
+  </script>
+
+  <script>
+    // Add an event listener for the soft right button press
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'SoftLeft' || event.keyCode === 101) {
+        const msg = prompt("Enter your message:");
+        if (msg) {
+          chatRef.push({
+            player: playerName,
+            message: msg,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+          });
+        }
+      } else if (event.key === 'SoftRight' || event.key === 'Menu' || event.keyCode === 102) {
+        // Confirm exit from app
+        if (confirm('Are you sure you want to exit the app?')) {
+          // Exit the app
+          navigator.app.exitApp();
+        }
+      }
+    });
+  </script>
+
+<script>
+  function showAd() {
+    getKaiAd({
+      publisher: "58d21092-87f8-47c3-883d-fcd67eb318d8",
+      app: "tikigamex0",
+      slot: "tikigamex0_slot",
+      onerror: e => {},
+      onready: e => { e.call("display"); }
+    });
+  }
+
+  // Show the ad immediately when the page loads
+  showAd();
+
+  // Show the ad every 2 minutes (120,000 milliseconds)
+  setInterval(showAd, 120000);
+</script>
+
+<script src="/kaiads.v5.min.js"></script>
+
+
+
+
+</body>
+</html>
