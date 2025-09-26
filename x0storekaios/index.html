@@ -91,22 +91,21 @@ button:active img {
 
 
 
-<div style="background-color: #f9f9f9; border-radius: 10px; border:2px solid green; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px; padding: 20px;">
+<div style="background-color: #f9f9f9; border-radius: 10px;  border:2px solid green; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px; padding: 20px;">
+
+<h1>Letest Apps And New Apps Updates 🔔</h1>
 
 
-<h1>📝 Social 💬</h1>
+  <div id="new-apps" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); ">
 
-
-
-<div id="social" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); ">
-  <script>
+    <script>
     (() => {
-      const appsFile = 'https://joe-x5.github.io/x0-store-kaios/social/apps.json';
+      const appsFile = 'https://joe-x5.github.io/x0-store-kaios/new-apps/apps.json';
       const openVersion = url => window.open(url, '_blank');
       fetch(appsFile)
         .then(r => r.json())
         .then(apps => {
-          const container = document.getElementById('social');
+          const container = document.getElementById('new-apps');
           apps.forEach(app => {
             const button = document.createElement('button');
             button.onclick = () => openVersion(app.url);
@@ -122,13 +121,16 @@ button:active img {
             container.appendChild(button);
           });
         })
-        .catch(err => console.error('Social load failed:', err));
+        .catch(err => console.error('Games load failed:', err));
     })();
-  
-</script>
+    </script>
+
+
 </div>
 </div>
- 
+
+
+
 <br/>
 
 
@@ -173,6 +175,48 @@ button:active img {
 
 
 
+<br/>
+
+
+
+<div style="background-color: #f9f9f9; border-radius: 10px; border:2px solid green; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px; padding: 20px;">
+
+
+<h1>📝 Social 💬</h1>
+
+
+
+<div id="social" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); ">
+  <script>
+    (() => {
+      const appsFile = 'https://joe-x5.github.io/x0-store-kaios/social/apps.json';
+      const openVersion = url => window.open(url, '_blank');
+      fetch(appsFile)
+        .then(r => r.json())
+        .then(apps => {
+          const container = document.getElementById('social');
+          apps.forEach(app => {
+            const button = document.createElement('button');
+            button.onclick = () => openVersion(app.url);
+
+            const img = document.createElement('img');
+            img.src = app.icon;
+            img.alt = app.name;
+            img.style.marginRight = '12px';
+            img.style.objectFit = 'contain';
+
+            button.appendChild(img);
+            button.appendChild(document.createTextNode(' ' + app.name));
+            container.appendChild(button);
+          });
+        })
+        .catch(err => console.error('Social load failed:', err));
+    })();
+  
+</script>
+</div>
+</div>
+ 
 <br/>
 
 
