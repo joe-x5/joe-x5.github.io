@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Chat</title>
+  
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  
+  <script src="kaiads.v5.min.js"></script>
+  <style>
+/* Define CSS variables for themes */
+:root {
+  /* Default Theme (Theme 1: Midnight Blue) */
+  --body-bg: linear-gradient(135deg, #1c2526, #2d4059);
+  --sent-bg: linear-gradient(135deg, #0288d1, #0277bd);
+  --sent-text: white;
+  --received-bg: rgba(245, 245, 245, 0.9);
+  --received-text: #263238;
+  --mentioned-bg: linear-gradient(135deg, #ffca28, #ffb300);
+  --mentioned-text: #000;
+  --header-bg: rgba(2, 119, 189, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(245, 245, 245, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 2: Forest Green */
+.theme-2 {
+  --body-bg: linear-gradient(135deg, #1b4332, #2d6a4f);
+  --sent-bg: linear-gradient(135deg, #2ecc71, #27ae60);
+  --sent-text: white;
+  --received-bg: rgba(200, 247, 197, 0.9);
+  --received-text: #2c3e50;
+  --mentioned-bg: linear-gradient(135deg, #219653, #1b4332);
+  --mentioned-text: white;
+  --header-bg: rgba(39, 174, 96, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(200, 247, 197, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 3: Sunset Glow */
+.theme-3 {
+  --body-bg: linear-gradient(135deg, #ff6b6b, #ff9f43);
+  --sent-bg: linear-gradient(135deg, #e67e22, #d35400);
+  --sent-text: white;
+  --received-bg: rgba(255, 245, 238, 0.9);
+  --received-text: #4a2c00;
+  --mentioned-bg: linear-gradient(135deg, #f1c40f, #e67e22);
+  --mentioned-text: white;
+  --header-bg: rgba(230, 126, 34, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(255, 245, 238, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 4: Amethyst Dream */
+.theme-4 {
+  --body-bg: linear-gradient(135deg, #4b0082, #6a0572);
+  --sent-bg: linear-gradient(135deg, #9b59b6, #8e44ad);
+  --sent-text: white;
+  --received-bg: rgba(243, 229, 245, 0.9);
+  --received-text: #4a235a;
+  --mentioned-bg: linear-gradient(135deg, #8e44ad, #6c3483);
+  --mentioned-text: white;
+  --header-bg: rgba(142, 68, 173, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(243, 229, 245, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 5: Ocean Breeze */
+.theme-5 {
+  --body-bg: linear-gradient(135deg, #2c5364, #0f2027);
+  --sent-bg: linear-gradient(135deg, #3498db, #2980b9);
+  --sent-text: white;
+  --received-bg: rgba(225, 245, 254, 0.9);
+  --received-text: #1b263b;
+  --mentioned-bg: linear-gradient(135deg, #2980b9, #2c3e50);
+  --mentioned-text: white;
+  --header-bg: rgba(52, 152, 219, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(225, 245, 254, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 6: Crimson Fire */
+.theme-6 {
+  --body-bg: linear-gradient(135deg, #8b0000, #b22222);
+  --sent-bg: linear-gradient(135deg, #e74c3c, #c0392b);
+  --sent-text: white;
+  --received-bg: rgba(255, 235, 235, 0.9);
+  --received-text: #4a1c1c;
+  --mentioned-bg: linear-gradient(135deg, #c0392b, #a93226);
+  --mentioned-text: white;
+  --header-bg: rgba(231, 76, 60, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(255, 235, 235, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 7: Slate Shadow */
+.theme-7 {
+  --body-bg: linear-gradient(135deg, #2c3e50, #4b5e6e);
+  --sent-bg: linear-gradient(135deg, #34495e, #2c3e50);
+  --sent-text: white;
+  --received-bg: rgba(236, 240, 241, 0.9);
+  --received-text: #2c3e50;
+  --mentioned-bg: linear-gradient(135deg, #2c3e50, #212f3d);
+  --mentioned-text: white;
+  --header-bg: rgba(52, 73, 94, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(236, 240, 241, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 8: Golden Dawn */
+.theme-8 {
+  --body-bg: linear-gradient(135deg, #f4c430, #f39c12);
+  --sent-bg: linear-gradient(135deg, #f1c40f, #e67e22);
+  --sent-text: #000;
+  --received-bg: rgba(255, 253, 208, 0.9);
+  --received-text: #3c2f2f;
+  --mentioned-bg: linear-gradient(135deg, #e67e22, #d35400);
+  --mentioned-text: white;
+  --header-bg: rgba(241, 196, 15, 0.8);
+  --header-text: #000;
+  --autocomplete-bg: rgba(255, 253, 208, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 9: Twilight Purple */
+.theme-9 {
+  --body-bg: linear-gradient(135deg, #2e1437, #4a235a);
+  --sent-bg: linear-gradient(135deg, #8e44ad, #9b59b6);
+  --sent-text: white;
+  --received-bg: rgba(237, 231, 246, 0.9);
+  --received-text: #311b92;
+  --mentioned-bg: linear-gradient(135deg, #6c3483, #4a235a);
+  --mentioned-text: white;
+  --header-bg: rgba(103, 58, 183, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(237, 231, 246, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 10: Emerald Wave */
+.theme-10 {
+  --body-bg: linear-gradient(135deg, #006d5b, #009688);
+  --sent-bg: linear-gradient(135deg, #26a69a, #00796b);
+  --sent-text: white;
+  --received-bg: rgba(224, 242, 241, 0.9);
+  --received-text: #004d40;
+  --mentioned-bg: linear-gradient(135deg, #00796b, #004d40);
+  --mentioned-text: white;
+  --header-bg: rgba(38, 166, 154, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(224, 242, 241, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 11: Sapphire Night */
+.theme-11 {
+  --body-bg: linear-gradient(135deg, #0d1b2a, #1b263b);
+  --sent-bg: linear-gradient(135deg, #0288d1, #0277bd);
+  --sent-text: white;
+  --received-bg: rgba(232, 245, 255, 0.9);
+  --received-text: #1b263b;
+  --mentioned-bg: linear-gradient(135deg, #0277bd, #01579b);
+  --mentioned-text: white;
+  --header-bg: rgba(2, 136, 209, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(232, 245, 255, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 12: Coral Reef */
+.theme-12 {
+  --body-bg: linear-gradient(135deg, #ff5e62, #f06292);
+  --sent-bg: linear-gradient(135deg, #ff6b6b, #ee5253);
+  --sent-text: white;
+  --received-bg: rgba(255, 236, 239, 0.9);
+  --received-text: #4a2c2c;
+  --mentioned-bg: linear-gradient(135deg, #f06292, #d81b60);
+  --mentioned-text: white;
+  --header-bg: rgba(255, 94, 98, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(255, 236, 239, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 13: Desert Sand */
+.theme-13 {
+  --body-bg: linear-gradient(135deg, #d8a47f, #b5651d);
+  --sent-bg: linear-gradient(135deg, #e59866, #d35400);
+  --sent-text: white;
+  --received-bg: rgba(255, 248, 220, 0.9);
+  --received-text: #4a2c00;
+  --mentioned-bg: linear-gradient(135deg, #d35400, #a04000);
+  --mentioned-text: white;
+  --header-bg: rgba(213, 100, 30, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(255, 248, 220, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 14: Frosty Mint */
+.theme-14 {
+  --body-bg: linear-gradient(135deg, #b2dfdb, #4db6ac);
+  --sent-bg: linear-gradient(135deg, #26a69a, #00897b);
+  --sent-text: white;
+  --received-bg: rgba(224, 242, 241, 0.9);
+  --received-text: #004d40;
+  --mentioned-bg: linear-gradient(135deg, #00897b, #00695c);
+  --mentioned-text: white;
+  --header-bg: rgba(77, 182, 172, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(224, 242, 241, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* Theme 15: Starry Night */
+.theme-15 {
+  --body-bg: linear-gradient(135deg, #191970, #2f4f4f);
+  --sent-bg: linear-gradient(135deg, #4682b4, #4169e1);
+  --sent-text: white;
+  --received-bg: rgba(240, 248, 255, 0.9);
+  --received-text: #191970;
+  --mentioned-bg: linear-gradient(135deg, #4169e1, #2f4f4f);
+  --mentioned-text: white;
+  --header-bg: rgba(70, 130, 180, 0.8);
+  --header-text: white;
+  --autocomplete-bg: rgba(240, 248, 255, 0.95);
+  --autocomplete-text: #000;
+}
+
+/* General styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--body-bg); /* Use theme-specific background */
+  color: #fff;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 16px;
+}
+
+header {
+  background: var(--header-bg);
+  color: var(--header-text);
+  text-align: center;
+  padding: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+}
+
+.online-count {
+  font-size: 12px;
+  margin-right: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 15px;
+}
+
+.navItem {
+  display: block;
+  width: 95%;
+  margin: 6px auto;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 20px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navItem:focus {
+  outline: 2px solid #ffcc00;
+  background: white;
+}
+
+button {
+  background: linear-gradient(45deg, #ffcc00, #ff9900);
+  color: black;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px 16px;
+  width: 85%;
+  border-radius: 20px;
+  margin-top: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background: linear-gradient(45deg, #ff9900, #ffcc00);
+  transform: translateY(-1px);
+}
+
+button:focus {
+  outline: 2px solid white;
+}
+
+#worldChatPage {
+  flex: 1;
+  overflow: auto;
+  display: none;
+}
+
+#worldChatPage.active {
+  display: flex;
+  flex-direction: column;
+}
+
+#chatBox {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
+
+.message {
+  padding: 6px 10px;
+  margin: 5px 0;
+  border-radius: 15px;
+  max-width: 85%;
+  font-size: 18px;
+  font-weight: bold;
+  word-wrap: break-word;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+  background-clip: padding-box;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sent {
+  background: var(--sent-bg);
+  color: var(--sent-text);
+  align-self: flex-end;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.received {
+  background: var(--received-bg);
+  color: var(--received-text);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.mentioned {
+  background: var(--mentioned-bg);
+  color: var(--mentioned-text);
+  align-self: flex-start;
+  border-left: 3px solid #ff3300;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(255, 204, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
+}
+
+.system-message {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  text-align: center;
+  max-width: 90%;
+  margin: 6px auto;
+  font-style: italic;
+  border-radius: 12px;
+  padding: 6px 12px;
+}
+
+.message-time {
+  font-size: 8px;
+  opacity: 0.7;
+  margin-top: 3px;
+  text-align: right;
+}
+
+#messageInputContainer {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  gap: 6px;
+  flex-direction: column;
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+#messageInput {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 13px;
+  border: none;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  width: 100%;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+#autocompleteList {
+  width: 100%;
+  max-height: 100px;
+  overflow-y: auto;
+  background: var(--autocomplete-bg);
+  border: none;
+  border-radius: 12px;
+  display: none;
+  flex-direction: column;
+  z-index: 100;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  bottom: 100%;
+  left: 8px;
+  right: 8px;
+}
+
+.autocomplete-item {
+  padding: 8px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  background: var(--autocomplete-bg);
+  color: var(--autocomplete-text);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.autocomplete-item:first-child {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.autocomplete-item:last-child {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item:focus {
+  background: var(--sent-bg);
+  color: var(--sent-text);
+  outline: none;
+}
+
+.typing-indicator {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 5px 8px;
+  margin: 4px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: fit-content;
+  max-width: 80%;
+  align-self: flex-end;
+  backdrop-filter: blur(5px);
+  display: none;
+  align-items: center;
+  gap: 3px;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.2;
+  background-clip: padding-box;
+  overflow: hidden;
+}
+
+#typingUser {
+  display: inline-block;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 2px;
+}
+
+.typing-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.7);
+  animation: typingAnimation 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+#cooldownMessage {
+  text-align: center;
+  padding: 8px;
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  font-size: 12px;
+  display: none;
+  border-radius: 8px;
+  margin: 6px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+#banMessage {
+  text-align: center;
+  padding: 12px;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  font-size: 14px;
+  display: none;
+  border-radius: 8px;
+  margin: 6px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.message-status {
+  font-size: 8px;
+  opacity: 0.7;
+  margin-top: 2px;
+  text-align: right;
+}
+
+.message-status.sent {
+  color: #a8e6cf;
+}
+
+.message-status.failed {
+  color: #ff8b94;
+}
+
+#messageStats {
+  text-align: center;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px 15px;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
+
+/* Uiverse.io Loader */
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.loader {
+  position: relative;
+  width: 60px;
+  height: 80px;
+}
+
+.loader__bar {
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  transform-origin: center bottom;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.loader__bar:nth-child(1) {
+  left: 0px;
+  transform: scale(1, 0.2);
+  animation: barUp1 4s infinite;
+}
+
+.loader__bar:nth-child(2) {
+  left: 12px;
+  transform: scale(1, 0.4);
+  animation: barUp2 4s infinite;
+}
+
+.loader__bar:nth-child(3) {
+  left: 24px;
+  transform: scale(1, 0.6);
+  animation: barUp3 4s infinite;
+}
+
+.loader__bar:nth-child(4) {
+  left: 36px;
+  transform: scale(1, 0.8);
+  animation: barUp4 4s infinite;
+}
+
+.loader__bar:nth-child(5) {
+  left: 48px;
+  transform: scale(1, 1);
+  animation: barUp5 4s infinite;
+}
+
+.loader__ball {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: rgb(44, 143, 255);
+  border-radius: 50%;
+  animation: ball624 4s infinite;
+}
+
+@keyframes ball624 {
+  0% { transform: translate(0, 0); }
+  5% { transform: translate(6px, -12px); }
+  10% { transform: translate(12px, -8px); }
+  17% { transform: translate(18px, -20px); }
+  20% { transform: translate(24px, -16px); }
+  27% { transform: translate(30px, -28px); }
+  30% { transform: translate(36px, -24px); }
+  37% { transform: translate(42px, -36px); }
+  40% { transform: translate(48px, -32px); }
+  50% { transform: translate(48px, 0); }
+  57% { transform: translate(42px, -12px); }
+  60% { transform: translate(36px, -8px); }
+  67% { transform: translate(30px, -20px); }
+  70% { transform: translate(24px, -16px); }
+  77% { transform: translate(18px, -28px); }
+  80% { transform: translate(12px, -24px); }
+  87% { transform: translate(6px, -36px); }
+  90% { transform: translate(0, -32px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes barUp1 {
+  0% { transform: scale(1, 0.2); }
+  40% { transform: scale(1, 0.2); }
+  50% { transform: scale(1, 1); }
+  90% { transform: scale(1, 1); }
+  100% { transform: scale(1, 0.2); }
+}
+
+@keyframes barUp2 {
+  0% { transform: scale(1, 0.4); }
+  40% { transform: scale(1, 0.4); }
+  50% { transform: scale(1, 0.8); }
+  90% { transform: scale(1, 0.8); }
+  100% { transform: scale(1, 0.4); }
+}
+
+@keyframes barUp3 {
+  0% { transform: scale(1, 0.6); }
+  100% { transform: scale(1, 0.6); }
+}
+
+@keyframes barUp4 {
+  0% { transform: scale(1, 0.8); }
+  40% { transform: scale(1, 0.8); }
+  50% { transform: scale(1, 0.4); }
+  90% { transform: scale(1, 0.4); }
+  100% { transform: scale(1, 0.8); }
+}
+
+@keyframes barUp5 {
+  0% { transform: scale(1, 1); }
+  40% { transform: scale(1, 1); }
+  50% { transform: scale(1, 0.2); }
+  90% { transform: scale(1, 0.2); }
+  100% { transform: scale(1, 1); }
+}
+
+/* KaiOS specific styles - optimized for small screens */
+@media (max-width: 480px) and (max-height: 320px) {
+  body {
+    font-size: 14px;
+  }
+  
+  header {
+    padding: 4px;
+    font-size: 13px;
+    line-height: 1.1;
+  }
+  
+  .message {
+    padding: 5px 8px;
+    font-size: 16px;
+    font-weight: bold;
+    max-width: 90%;
+    margin: 3px 0;
+    border-radius: 12px;
+    background-clip: padding-box;
+    overflow: hidden;
+  }
+  
+  .typing-indicator {
+    font-size: 11px;
+    padding: 3px 6px;
+    margin: 2px 0;
+    max-width: 85%;
+    line-height: 1.1;
+    background-clip: padding-box;
+    overflow: hidden;
+  }
+
+  #messageInput {
+    padding: 5px 8px;
+    font-size: 12px;
+    border-radius: 15px;
+  }
+
+  .online-count {
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+
+  #banMessage {
+    font-size: 13px;
+    padding: 5px;
+  }
+
+  #cooldownMessage {
+    font-size: 11px;
+    padding: 4px;
+  }
+
+  .autocomplete-item {
+    padding: 3px 5px;
+    font-size: 11px;
+    color: var(--autocomplete-text);
+  }
+
+  #autocompleteList {
+    max-height: 50px;
+  }
+
+  .loader {
+    width: 45px;
+    height: 55px;
+  }
+
+  .loader__bar {
+    width: 5px;
+    height: 40%;
+  }
+
+  .loader__bar:nth-child(1) { left: 0px; }
+  .loader__bar:nth-child(2) { left: 8px; }
+  .loader__bar:nth-child(3) { left: 16px; }
+  .loader__bar:nth-child(4) { left: 24px; }
+  .loader__bar:nth-child(5) { left: 32px; }
+
+  .loader__ball {
+    bottom: 5px;
+    width: 5px;
+    height: 5px;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+/* Soft Left key label for theme switching */
+#softLeftLabel {
+  position: fixed;
+  bottom: 2px;
+  left: 4px;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 1000;
+  max-width: 80%;
+  line-height: 1.3; /* Space between lines */
+  text-align: left;
+}
+
+/* KaiOS-specific adjustments */
+@media (max-width: 480px) and (max-height: 320px) {
+  #softLeftLabel {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="loader">
+      <div class="loader__bar"></div>
+      <div class="loader__bar"></div>
+      <div class="loader__bar"></div>
+      <div class="loader__bar"></div>
+      <div class="loader__bar"></div>
+      <div class="loader__ball"></div>
+    </div>
+    <span>Loading...</span>
+  </div>
+  <div id="worldChatPage" class="active">
+    <header>
+      <span>🌍 World Chat</span>
+      <span id="onlineCount" class="online-count">Online: 0</span>
+    </header>
+    <div id="banMessage">
+      You are banned. Remaining time: <span id="banRemainingTime"></span>
+    </div>
+    <div id="messageStats"></div>
+    <div id="chatBox">
+      <div class="empty-state">No messages yet. Start the conversation!</div>
+      <div id="typingIndicator" class="typing-indicator" style="display: none;">
+        <span id="typingUser"></span>
+        <div class="typing-dots">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div id="cooldownMessage"></div>
+    <div id="messageInputContainer">
+      <div id="autocompleteList"></div>
+      <input type="text" id="messageInput" class="navItem" placeholder="Type your message here..." tabindex="4" />
+    </div>
+  </div>
+<div id="softLeftLabel" style="display: none;">
+  ⬇️ To change theme press soft left button<br>Theme
+</div>
+
+
+  <script>    </script>
+  
+  <script src="wc.5.0.js"></script>
+  
+   </body>
+    </html>
+    
+  	
