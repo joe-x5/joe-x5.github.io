@@ -3,7 +3,7 @@
 // Function to fetch notice from notice.json
 async function fetchNotice() {
     try {
-        const response = await fetch('notice.json');
+        const response = await fetch('https://joe-x5.github.io/kaios/notice.json');
         
         // Check if the response is OK (status code 200-299)
         if (!response.ok) {
