@@ -1,16 +1,14 @@
 // script.js
 
 // Function to dynamically load another JavaScript file
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('https://joe-x5.github.io/kaios/notice.js');
-        script.src = src;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-        document.head.appendChild(script);
+loadScript('https://joe-x5.github.io/kaios/notice.js')
+    .then(() => {
+        console.log('Script loaded successfully!');
+        // You can use functions or variables from the loaded script here
+    })
+    .catch(error => {
+        console.error(error);
     });
-            }
-
 
 (function() {
     // Create and style the popup
