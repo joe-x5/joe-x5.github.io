@@ -20,8 +20,8 @@
     popup.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
     popup.style.zIndex = '1000';
 
-    // Create and style the dismiss button
-    dismissBtn.innerText = 'Dismiss';
+    // Create and style the dismiss button with emoji
+    dismissBtn.innerHTML = '&#10006; Dismiss'; // Using HTML entity for "cross mark"
     dismissBtn.style.position = 'absolute';
     dismissBtn.style.top = '5px';
     dismissBtn.style.right = '5px';
