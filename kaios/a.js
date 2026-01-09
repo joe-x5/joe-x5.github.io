@@ -1,5 +1,17 @@
 // script.js
 
+// Function to dynamically load another JavaScript file
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('https://joe-x5.github.io/kaios/notice.js');
+        script.src = src;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+        document.head.appendChild(script);
+    });
+            }
+
+
 (function() {
     // Create and style the popup
     const popup = document.createElement('div');
@@ -14,7 +26,8 @@
     popup.style.top = '50%';
     popup.style.left = '50%';
     popup.style.transform = 'translate(-50%, -50%)';
-    popup.style.border = '1px solid #ccc';
+    popup.style.border = '2px solid #ccc';
+    popup.style.border.radius = '5px';
     popup.style.backgroundColor = 'white';
     popup.style.display = 'none'; // Hide initially
     popup.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
