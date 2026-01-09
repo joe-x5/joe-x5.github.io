@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repository Viewer</title>
+    <style>
+        /* Styles omitted for brevity; you can use the previous styles. */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>GitHub Repository Viewer</h1>
+        <p>Total Repos: <span id="total-repos">0</span></p>
+        <div class="repo-list" id="repo-list"></div>
+        <p id="footnote"></p>
+        <div class="footer">
+            &copy; 2023 Joe X5
+        </div>
+    </div>
+
+    <script>
+        const username = 'joe-x5'; // Your GitHub username
+        const apiUrl = `https://api.github.com/users/${username}/repos`;
+        const viewsCountUrl = `./views.json`;
+
+        async function fetchRepos() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const repos = await response.json();
+                document.getElementById('total-repos').textContent = repos.length;
+
+                const repoList = document.getElementById('repo-list');
+                repoList.innerHTML = "";
+
+                repos.forEach(async repo => {
+                    const repoDiv = document.createElement('div');
+                    const viewCount = await fetchViewCount(repo.name);
+
+                    repoDiv.classList.add('repo');
+                    repoDiv.innerHTML = `<strong>${repo.name}</strong> - Watchers: ${repo.watchers_count} - Views: ${viewCount}`;
+
+                    // Increment view count
+                    repoDiv.addEventListener('click', async () => {
+                        await updateViewCount(repo.name);
+                        alert(`You viewed ${repo.name}!`);
+                    });
+
+                    repoList.appendChild(repoDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching repositories:', error);
+            }
+        }
+
+        async function fetchViewCount(repo) {
+            try {
+                const response = await fetch(viewsCountUrl);
+                if (!response.ok) throw new Error('Error fetching view counts');
+                const data = await response.json();
+                return data.views[repo] || 0;
+            } catch (error) {
+                console.error(error);
+                return 0;
+            }
+        }
+
+        async function updateViewCount(repo) {
+            // Call GitHub Actions endpoint or a function that updates the count
+            await fetch(`/api/incrementView/${repo}`, { method: 'POST' });
+        }
+
+        fetchRepos();
+    </script>
+</body>
+
+</html>
