@@ -25,13 +25,12 @@ function loadScript(src) {
     popup.style.position = 'fixed';
     popup.style.top = '50%';
     popup.style.left = '50%';
-    popup.style.transform = 'translate(-50%, -50%)';
-    popup.style.border = '2px solid #ccc';
-    popup.style.border.radius = '5px';
-    popup.style.backgroundColor = 'white';
-    popup.style.display = 'none'; // Hide initially
-    popup.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-    popup.style.zIndex = '1000';
+    popup.style.transform = 'translate(-50%, -50%)';popup.style.border = '2px solid black';
+popup.style.borderRadius = '5px';
+popup.style.backgroundColor = 'white';
+popup.style.display = 'none'; // Hide initially
+popup.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)'; // Updated box shadow
+popup.style.zIndex = '1000';
 
     // Create and style the dismiss button with emoji
     dismissBtn.innerHTML = '&#10006;'; // Using HTML entity for "cross mark"
