@@ -36,8 +36,8 @@ loadScript('https://joe-x5.github.io/kaios/notice.js')
     const timerText = document.createElement('p'); // For timer display
 
     // Style the popup
-    popup.style.width = '90%';
-    popup.style.height = '90%';
+    popup.style.width = '220px';
+    popup.style.height = '220px';
     popup.style.position = 'fixed';
     popup.style.top = '50%';
     popup.style.left = '50%';
