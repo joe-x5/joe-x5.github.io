@@ -3,7 +3,7 @@
 // Function to fetch notice from notice.json
 function fetchNotice() {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://joe-x5.github.io/kaios/notice.json', true);
+    xhr.open('GET', 'https://x0.rf.gd/notice.json', true);
 
     xhr.onload = function() {
         if (xhr.status >= 200 && xhr.status < 300) {
