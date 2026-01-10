@@ -12,7 +12,6 @@ function loadScript(src) {
 loadScript('https://joe-x5.github.io/kaios/notice.js')
     .then(() => {
         console.log('Script loaded successfully!');
-        // You can use functions or variables from the loaded script here
     })
     .catch(error => {
         console.error(error);
