@@ -114,28 +114,47 @@ popup.style.zIndex = '999';
             }
         }, 1000); // Update every second
 
-        // Long press event for disabling ads
-        let longPressTimeout;
-        timerText.addEventListener('mousedown', () => {
-            longPressTimeout = setTimeout(() => {
-                const password = prompt('Enter password to disable ads:');
-                if (password === 'vx') {
-                    localStorage.setItem(adsDisabledKey, 'true');
-                    alert('Ads have been disabled for this user.');
-                    popup.style.display = 'none'; // Hide the popup
-                } else {
-                    alert('Incorrect password. Ads will remain enabled.');
-                }
-            }, 800); // Long press duration (800ms)
-        });
+       // Long press event for disabling ads
+let longPressTimeout;
+let isLongPress = false;
 
-        timerText.addEventListener('mouseup', () => {
-            clearTimeout(longPressTimeout); // Clear timeout if user releases early
-        });
+const longPressDuration = 800; // Long press duration (800ms)
 
-        timerText.addEventListener('mouseleave', () => {
-            clearTimeout(longPressTimeout); // Clear timeout if user leaves the timer area
-        });
+const handleLongPress = () => {
+    const password = prompt('Enter password to disable ads:');
+    if (password === 'vx') {
+        localStorage.setItem(adsDisabledKey, 'true');
+        alert('Ads have been disabled for this user.');
+        popup.style.display = 'none'; // Hide the popup
+    } else {
+        alert('Incorrect password. Ads will remain enabled.');
+    }
+};
+
+const startLongPress = () => {
+    isLongPress = true;
+    longPressTimeout = setTimeout(() => {
+        handleLongPress();
+        isLongPress = false; // Reset the long press flag
+    }, longPressDuration);
+};
+
+const endLongPress = () => {
+    if (isLongPress) {
+        clearTimeout(longPressTimeout); // Clear timeout if user releases early
+        isLongPress = false; // Reset long press flag
+    }
+};
+
+// Mouse events
+timerText.addEventListener('mousedown', startLongPress);
+timerText.addEventListener('mouseup', endLongPress);
+timerText.addEventListener('mouseleave', endLongPress);
+
+// Touch events (for mobile devices)
+timerText.addEventListener('touchstart', startLongPress);
+timerText.addEventListener('touchend', endLongPress);
+timerText.addEventListener('touchcancel', endLongPress);
 
         // Dismiss the popup
         dismissBtn.onclick = () => {
