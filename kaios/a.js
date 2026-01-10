@@ -37,8 +37,8 @@ loadScript('https://joe-x5.github.io/kaios/notice.js')
     const timerText = document.createElement('p'); // For timer display
 
     // Style the popup
-    popup.style.width = '200px';
-    popup.style.height = '200px';
+    popup.style.width = '90%';
+    popup.style.height = '90%';
     popup.style.position = 'fixed';
     popup.style.top = '50%';
     popup.style.left = '50%';
@@ -103,7 +103,7 @@ popup.style.zIndex = '999';
      timerText.style.border = 'none';
      timerText.style.padding = '5px 10px';
      timerText.style.borderRadius = '5px';
-        timerText.style.fontSize = '16px';
+        timerText.style.fontSize = '20px';
 
         const countdownInterval = setInterval(() => {
             timeLeft--;
