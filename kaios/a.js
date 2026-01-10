@@ -102,7 +102,7 @@ popup.style.zIndex = '999';
      timerText.style.border = 'none';
      timerText.style.padding = '5px 10px';
      timerText.style.borderRadius = '5px';
-        timerText.style.fontSize = '20px';
+        timerText.style.fontSize = '14px';
 
         const countdownInterval = setInterval(() => {
             timeLeft--;
@@ -114,11 +114,12 @@ popup.style.zIndex = '999';
             }
         }, 1000); // Update every second
 
-       // Long press event for disabling ads
+     // Long press event for disabling ads
 let longPressTimeout;
 let isLongPress = false;
 
 const longPressDuration = 800; // Long press duration (800ms)
+const adsDisabledKey = 'adsDisabled';  // Set your key to store the ads disabled state
 
 const handleLongPress = () => {
     const password = prompt('Enter password to disable ads:');
@@ -135,7 +136,7 @@ const startLongPress = () => {
     isLongPress = true;
     longPressTimeout = setTimeout(() => {
         handleLongPress();
-        isLongPress = false; // Reset the long press flag
+        isLongPress = false; // Reset the long press flag after handling
     }, longPressDuration);
 };
 
@@ -156,6 +157,14 @@ timerText.addEventListener('touchstart', startLongPress);
 timerText.addEventListener('touchend', endLongPress);
 timerText.addEventListener('touchcancel', endLongPress);
 
+// Optional: Handle pointer events for better compatibility across all devices
+timerText.addEventListener('pointerdown', startLongPress);
+timerText.addEventListener('pointerup', endLongPress);
+timerText.addEventListener('pointercancel', endLongPress);
+
+
+
+        
         // Dismiss the popup
         dismissBtn.onclick = () => {
             popup.style.display = 'none'; // Hide the popup
