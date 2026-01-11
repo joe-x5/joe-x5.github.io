@@ -9,13 +9,18 @@ function loadScript(src) {
     });
 }
 
-loadScript('https://joe-x5.github.io/kaios/notice.js')
-    .then(() => {
-        console.log('Script loaded successfully!');
-    })
-    .catch(error => {
-        console.error(error);
-    });
+// Load multiple scripts
+Promise.all([
+    loadScript('https://joe-x5.github.io/kaios/notice.js'),
+    loadScript('https://joe-x5.github.io/kaios/b.js')
+]).then(() => {
+    console.log('All scripts loaded successfully!');
+}).catch(error => {
+    console.error(error);
+});
+
+
+
 
 (function() {
     // Check localStorage for ad-disable flag
