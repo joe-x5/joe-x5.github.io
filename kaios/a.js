@@ -178,3 +178,6 @@ timerText.addEventListener('pointercancel', endLongPress);
     // Show the popup when the page loads for the first time
     window.onload = showPopup;
 })();
+
+
+
