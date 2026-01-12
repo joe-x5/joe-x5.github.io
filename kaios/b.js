@@ -1,4 +1,3 @@
-
 // ====================================================
 // KaiOS Ads – Multi Publisher + SoftLeft Dismiss + Timer
 // ====================================================
@@ -8,7 +7,7 @@
   const CONFIG = {
     publishers: [
       "566c4d75-f28c-4f26-ba75-4cbecfe54965",
-      "080b82ab-b33a-4763-a498-50f464567e49",
+      "72183fd2-d463-4969-9659-99e78130751d",
       "4c312590-8682-4703-9820-d9ea5857c7ce"
     ],
 
@@ -155,3 +154,43 @@
     : init();
 
 })();
+
+
+
+        getKaiAd({
+	publisher: '58d21092-87f8-47c3-883d-fcd67eb318d8',
+	app: '10',
+	onerror: err => console.error('Custom catch:', err),
+	onready: ad => {
+		// Ad is ready to be displayed
+		// calling 'display' will display the ad
+		ad.call('display')
+	}
+})
+
+
+
+
+        getKaiAd({
+	publisher: '4c312590-8682-4703-9820-d9ea5857c7ce',
+	app: '11',
+	onerror: err => console.error('Custom catch:', err),
+	onready: ad => {
+		// Ad is ready to be displayed
+		// calling 'display' will display the ad
+		ad.call('display')
+	}
+})
+
+
+
+        getKaiAd({
+	publisher: '72183fd2-d463-4969-9659-99e78130751d',
+	app: '12',
+	onerror: err => console.error('Custom catch:', err),
+	onready: ad => {
+		// Ad is ready to be displayed
+		// calling 'display' will display the ad
+		ad.call('display')
+	}
+})
