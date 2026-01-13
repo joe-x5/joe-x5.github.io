@@ -1,3 +1,7 @@
 {
-    "notice": "Thanks For Using Apps, Comment on our Website ( https://x0.rf.gd/). , If You are Using DPad App Then Press Call Button To Exit From Apps"
+	"b2g_features": {
+		"dependencies": {
+			"ads-sdk": "1.5.8"
+		}
+	}
 }
