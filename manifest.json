@@ -29,6 +29,14 @@
       "type": "image/x-icon"
     }
   ],
+{
+	"b2g_features": {
+		"dependencies": {
+			"ads-sdk": "1.5.8"
+		}
+	}
+},
+
   "default_locale": "en",
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF"
