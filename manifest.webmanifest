@@ -1,2 +1,7 @@
-ew0KCSJiMmdfZmVhdHVyZXMiOiB7DQoJCSJkZXBlbmRlbmNpZXMiOiB7DQoJ
-CQkiYWRzLXNkayI6ICIxLjUuOCINCgkJfQ0KCX0NCn0=
+{
+	"b2g_features": {
+		"dependencies": {
+			"ads-sdk": "1.5.8"
+		}
+	}
+}
