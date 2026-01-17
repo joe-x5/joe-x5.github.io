@@ -1,1 +1,43 @@
-{}
+{
+  "manifest_version": 2,
+  "name": "X0 Team",
+  "short_name": "X0 Team",
+  "description": "Stay updated with the latest apps and features on KaiOS.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "all",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "192x192",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "512x512",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "144x144",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "96x96",
+      "type": "image/x-icon"
+    }
+  ],
+{
+	"b2g_features": {
+		"dependencies": {
+			"ads-sdk": "1.5.8"
+		}
+	}
+},
+
+  "default_locale": "en",
+  "theme_color": "#FFFFFF",
+  "background_color": "#FFFFFF"
+}
