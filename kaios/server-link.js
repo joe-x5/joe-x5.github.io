@@ -3,6 +3,6 @@
 
   if (enableReplacement) {
     document.querySelectorAll('iframe').forEach(function(iframe) {
-      iframe.src = iframe.src.replace('x0storekaios.blogspot.com/', 'new.aaryansah.space/tools/safe-link/link.php?p=');
+      iframe.src = iframe.src.replace('x0storekaios.blogspot.com/', 'x0.rf.gd/tools/safe-link/links.php?p=');
     });
   }
