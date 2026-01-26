@@ -1,1 +1,9 @@
-{}
+{
+  "enabled": true,
+  "banned_countries": ["Russia", "China", "North Korea", "Iran", "Syria"],
+  "dark_screen_message": "🚫 Access Denied: Your country is restricted from accessing this content.",
+  "check_interval": 30,
+  "allow_localhost": true,
+  "api_endpoint": "https://ipapi.co/json/",
+  "fallback_api": "https://worldtimeapi.org/api/ip"
+}
