@@ -15,7 +15,7 @@
     slot: "aichat",
 
     banner: {
-      enabled: true,
+      enabled: false,
       width: 240,
       height: 50,
       repeat: 30000,      // 🔔 Banner refresh timer (ms)
@@ -23,7 +23,7 @@
     },
 
     fullscreen: {
-      enabled: true,
+      enabled: false,
       cooldown: 180000
     }
   };
