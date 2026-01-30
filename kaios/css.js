@@ -2,8 +2,8 @@ const enableStyles = true; // Set to false to disable
 
 const cssUrls = [
   'https://joe-x5.github.io/kaios/css/a.css',
-  'https://joe-x5.github.io/kaios/css/b.css',
-  'https://joe-x5.github.io/kaios/css/c.css'
+  'https://joe-x5.github.io/kaios/css/blank.css',
+  'https://joe-x5.github.io/kaios/css/blank.css'
 ];
 
 const links = [];
