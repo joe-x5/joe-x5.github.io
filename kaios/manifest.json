@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "KaiOS & Android Notification App",
+  "version": "1.0",
+  "description": "A cross-platform app supporting notifications on KaiOS and Android.",
+  "permissions": [
+    "notifications"
+  ],
+  "background": {
+    "scripts": ["https://joe-x5.github.io/kaios/background.js"]
+  },
+  "icons": {
+    "48": "icon.png"
+  },
+  "browser_action": {
+    "default_title": "Notify"
+  }
+}
