@@ -1,8 +1,14 @@
-  // Toggle variable: set to true to enable URL replacement, false to disable
-  const enableReplacement = true; // Change to false to disable
+// Run this script as early as possible in your app's startup
+const enableReplacement = true;
 
-  if (enableReplacement) {
-    document.querySelectorAll('iframe').forEach(function(iframe) {
-      iframe.src = iframe.src.replace('x0storekaios.blogspot.com/', 'x0.rf.gd/tools/safe-link/links.php?p=');
-    });
-  }
+if (enableReplacement) {
+  // Replace iframe URLs immediately
+  document.querySelectorAll('iframe').forEach(function(iframe) {
+    if (iframe.src.includes('x0storekaios.blogspot.com/')) {
+      iframe.src = iframe.src.replace(
+        'x0storekaios.blogspot.com/',
+        'x0.rf.gd/tools/safe-link/links.php?p='
+      );
+    }
+  });
+}
