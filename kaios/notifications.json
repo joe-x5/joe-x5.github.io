@@ -1,20 +1,37 @@
-Ww0KICB7DQogICAgInRpdGxlIjogIk1vcm5pbmcgUmVtaW5kZXIiLA0KICAg
-ICJib2R5IjogIkdvb2QgbW9ybmluZyEgRG9uJ3QgZm9yZ2V0IHRvIGNoZWNr
-IHlvdXIgc2NoZWR1bGUuIiwNCiAgICAiaWNvbiI6ICJodHRwczovL3gwLnJm
-LmdkL2ljb24ucG5nIiwNCiAgICAiZW5hYmxlZCI6IHRydWUsDQogICAgImRl
-bGF5IjogMTANCiAgfSwNCiAgew0KICAgICJ0aXRsZSI6ICJNZWV0aW5nIEFs
-ZXJ0IiwNCiAgICAiYm9keSI6ICJUZWFtIG1lZXRpbmcgc3RhcnRzIGluIDE1
-IG1pbnV0ZXMuIiwNCiAgICAiaWNvbiI6ICJodHRwczovL3gwLnJmLmdkL2lj
-b24ucG5nIiwNCiAgICAiZW5hYmxlZCI6IHRydWUsDQogICAgImRlbGF5Ijog
-MjANCiAgfSwNCiAgew0KICAgICJ0aXRsZSI6ICJCcmVhayBUaW1lIiwNCiAg
-ICAiYm9keSI6ICJUYWtlIGEgNS1taW51dGUgYnJlYWsgYW5kIHN0cmV0Y2gu
-IiwNCiAgICAiaWNvbiI6ICJodHRwczovL3gwLnJmLmdkL2ljb24ucG5nIiwN
-CiAgICAiZW5hYmxlZCI6IHRydWUsDQogICAgImRlbGF5IjogMzANCiAgfSwN
-CiAgew0KICAgICJ0aXRsZSI6ICJTdGF5IEh5ZHJhdGVkIiwNCiAgICAiYm9k
-eSI6ICJSZW1lbWJlciB0byBkcmluayB3YXRlci4iLA0KICAgICJpY29uIjog
-Imh0dHBzOi8veDAucmYuZ2QvaWNvbi5wbmciLA0KICAgICJlbmFibGVkIjog
-dHJ1ZSwNCiAgICAiZGVsYXkiOiA0MA0KICB9LA0KICB7DQogICAgInRpdGxl
-IjogIldvcmtvdXQgUmVtaW5kZXIiLA0KICAgICJib2R5IjogIlRpbWUgZm9y
-IHlvdXIgZGFpbHkgd29ya291dCEiLA0KICAgICJpY29uIjogImh0dHBzOi8v
-eDAucmYuZ2QvaWNvbi5wbmciLA0KICAgICJlbmFibGVkIjogZmFsc2UsDQog
-ICAgImRlbGF5IjogNTANCiAgfQ0KXQ==
+[
+  {
+    "title": "Morning Reminder",
+    "body": "Good morning! Don't forget to check your schedule.",
+    "icon": "https://x0.rf.gd/icon.png",
+    "enabled": true,
+    "delay": 10
+  },
+  {
+    "title": "Meeting Alert",
+    "body": "Team meeting starts in 15 minutes.",
+    "icon": "https://x0.rf.gd/icon.png",
+    "enabled": true,
+    "delay": 20
+  },
+  {
+    "title": "Break Time",
+    "body": "Take a 5-minute break and stretch.",
+    "icon": "https://x0.rf.gd/icon.png",
+    "enabled": true,
+    "delay": 30
+  },
+  {
+    "title": "Stay Hydrated",
+    "body": "Remember to drink water.",
+    "icon": "https://x0.rf.gd/icon.png",
+    "enabled": true,
+    "delay": 40
+  },
+  {
+    "title": "Workout Reminder",
+    "body": "Time for your daily workout!",
+    "icon": "https://x0.rf.gd/icon.png",
+    "enabled": false,
+    "delay": 50
+  }
+]
