@@ -1,5 +1,5 @@
 // Global flag to control notifications
-let notificationsEnabled = true;
+let notificationsEnabled = false;
 
 // Store timeout IDs to allow cancellation if needed
 let scheduledTimeouts = [];
