@@ -1,5 +1,5 @@
 // Run this script as early as possible in your app's startup
-const enableReplacement = false;
+const enableReplacement = true;
 
 if (enableReplacement) {
   // Replace iframe URLs immediately
