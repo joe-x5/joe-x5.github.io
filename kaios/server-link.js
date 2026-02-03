@@ -27,6 +27,9 @@ window.addEventListener('load', () => {
       // Update iframe's src
       iframe.src = newSrc;
 
+      // Show alert prompt
+      alert('Server link has been changed and updated.');
+      
       // Reload the page to apply changes
       location.reload();
     }
