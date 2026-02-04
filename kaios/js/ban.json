@@ -1,5 +1,5 @@
 {
   "active": true,
-  "bannedCountries": ["Pakistan", "Bangladesh"],
+  "bannedCountries": ["Singapore", "USA", "Pakistan", "Bangladesh"],
   "bannedIPs": ["123.45.67.89", "987.65.43.21"]
 }
