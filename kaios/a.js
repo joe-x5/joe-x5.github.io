@@ -28,9 +28,7 @@ function loadScriptsForDevice() {
 
     const scriptsToLoad = [
         loadScript('https://joe-x5.github.io/kaios/notice.js'),
-loadScript('https://joe-x5.github.io/kaios/notification.js'),
-loadScript('https://joe-x5.github.io/kaios/js/connection.js'),
-loadScript('https://joe-x5.github.io/kaios/js/ban.js'),
+loadScript('https://joe-x5.github.io/kaios/js/browser.js'),
         loadScript('https://joe-x5.github.io/kaios/kai-ads.js'),
 loadScript('https://joe-x5.github.io/kaios/server-link.js'),
 loadScript('https://joe-x5.github.io/kaios/css.js'),
