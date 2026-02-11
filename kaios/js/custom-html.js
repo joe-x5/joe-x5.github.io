@@ -3,51 +3,8 @@ const htmlPage353 = true; // Set to true to activate
 if (htmlPage353) {
   document.addEventListener('DOMContentLoaded', () => {
     // Create and add CSS styles
-    const styleContent = `
-      /* Style for overlay with id 'customPage353' */
-      #customPage353 {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 9999;
-        background-color: rgba(255, 255, 255, 0.8);
-        overflow: auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      /* Inner container styles */
-      .customContainer {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        max-width: 600px;
-        width: 90%;
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      }
-      /* Custom classes styles */
-      .customExample {
-        color: green;
-        font-weight: bold;
-        font-size: 24px;
-        margin-bottom: 10px;
-      }
-      .customTask {
-        font-size: 20px;
-        margin-top: 10px;
-        font-weight: bold;
-      }
-      .customPeople {
-        list-style: none;
-        padding: 0;
-        margin-top: 10px;
-      }
-      .customPeople li {
-        margin: 5px 0;
-      }
-    `;
+    const styleContent = `    `;
+    
     const styleTag = document.createElement('style');
     styleTag.innerHTML = styleContent;
     document.head.appendChild(styleTag);
@@ -59,12 +16,41 @@ if (htmlPage353) {
     // Inner container for content
     overlayDiv.innerHTML = `
       <div class="customContainer">
-        <div class="customExample">Div example with custom variable</div>
-        <div class="customTask">Task</div>
-        <p>Add 20+ people for access app</p>
-        <ul class="customPeople">
-          ${Array.from({ length: 25 }, (_, i) => `<li>Person ${i + 1}</li>`).join('')}
-        </ul>
+      	
+      <style>
+      	
+      
+            /* Style for overlay with id 'customPage353' */
+      #customPage353 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        overflow: auto;
+        background: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+
+            
+      /* Inner container styles */
+      .customContainer {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 85%;
+        border: 2px solid red;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+      }
+
+</style>
+      
+<h1> Add 20+ People for access Apps</h1>
+<p># share apps with 20+ people and Visit on <a href="http://x0.rf.gd">http://x0.rf.gd</a> Or Try to Connect on X0 Support.</p>
       </div>
     `;
 
@@ -72,3 +58,5 @@ if (htmlPage353) {
     document.body.appendChild(overlayDiv);
   });
 }
+
+
