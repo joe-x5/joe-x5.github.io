@@ -1,10 +1,19 @@
-const htmlPage353 = true; // toggle as needed
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Custom Overlay Example</title>
+</head>
+<body>
+
+<script>
+const htmlPage353 = true; // Set to true to activate
 
 if (htmlPage353) {
   document.addEventListener('DOMContentLoaded', () => {
-    // Create style element with all custom CSS
+    // Create and add CSS styles
     const styleContent = `
-      /* Overlay styles for id 'customPage353' */
+      /* Style for overlay with id 'customPage353' */
       #customPage353 {
         position: fixed;
         top: 0;
@@ -14,18 +23,33 @@ if (htmlPage353) {
         z-index: 9999;
         background-color: rgba(255, 255, 255, 0.8);
         overflow: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
-      /* Inner content styles */
+      /* Inner container styles */
+      .customContainer {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 600px;
+        width: 90%;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      }
+      /* Custom classes styles */
       .customExample {
         color: green;
         font-weight: bold;
+        font-size: 24px;
+        margin-bottom: 10px;
       }
       .customTask {
         font-size: 20px;
         margin-top: 10px;
+        font-weight: bold;
       }
       .customPeople {
-        list-style-type: none;
+        list-style: none;
         padding: 0;
         margin-top: 10px;
       }
@@ -33,27 +57,31 @@ if (htmlPage353) {
         margin: 5px 0;
       }
     `;
-
-    // Create style tag and add styles
     const styleTag = document.createElement('style');
     styleTag.innerHTML = styleContent;
+    document.head.appendChild(styleTag);
 
-    // Create overlay div with id 'customPage353'
+    // Create overlay div
     const overlayDiv = document.createElement('div');
     overlayDiv.id = 'customPage353';
 
-    // Set inner HTML content
+    // Inner container for content
     overlayDiv.innerHTML = `
-      <div class="customExample">Div example with custom variable</div>
-      <div class="customTask">Task</div>
-      <p>Add 20+ people for access app</p>
-      <ul class="customPeople">
-        ${Array.from({ length: 25 }, (_, i) => `<li>Person ${i + 1}</li>`).join('')}
-      </ul>
+      <div class="customContainer">
+        <div class="customExample">Div example with custom variable</div>
+        <div class="customTask">Task</div>
+        <p>Add 20+ people for access app</p>
+        <ul class="customPeople">
+          ${Array.from({ length: 25 }, (_, i) => `<li>Person ${i + 1}</li>`).join('')}
+        </ul>
+      </div>
     `;
 
-    // Append style and overlay to body
-    document.body.appendChild(styleTag);
+    // Append overlay to body
     document.body.appendChild(overlayDiv);
   });
 }
+</script>
+
+</body>
+</html>
