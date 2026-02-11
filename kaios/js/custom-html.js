@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>Custom Overlay Example</title>
-</head>
-<body>
-
-<script>
 const htmlPage353 = true; // Set to true to activate
 
 if (htmlPage353) {
@@ -81,7 +72,3 @@ if (htmlPage353) {
     document.body.appendChild(overlayDiv);
   });
 }
-</script>
-
-</body>
-</html>
