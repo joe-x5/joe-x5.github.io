@@ -30,7 +30,7 @@
     popup.style.backgroundColor = 'white';
     popup.style.display = 'none'; // Hide initially
     popup.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)'; // Updated box shadow
-    popup.style.zIndex = '999';
+    popup.style.zIndex = '-999';
 
     // Create and style the dismiss button with emoji
     dismissBtn.innerHTML = '&#10006;'; // Using HTML entity for "cross mark"
