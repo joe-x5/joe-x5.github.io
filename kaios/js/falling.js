@@ -1,22 +1,39 @@
 // script.js
 
 (function() {
-  // Constants
-  const LONG_PRESS_DURATION = 3000; // 3 seconds in ms
-  const BUTTON_CODE_5 = 53; // Key code for '5' key in KaiOS
-  const FALLING_ITEMS = [
-    { type: 'heart', emoji: '❤️' },
-    { type: 'flower', emoji: '🌸' },
-    { type: 'hears', emoji: '👂' },
-    { type: 'panty', emoji: '🩲' },
-    { type: 'banana', emoji: '🍌' },
-  ];
-
-  // State variables
+  const LONG_PRESS_DURATION = 3000; // 3 seconds
+  const TARGET_KEY = '5'; // Key to detect (e.key == '5')
   let pressTimer = null;
   let isLongPress = false;
 
-  // Create overlay for falling animations
+  // Load saved option or default to 0 (off)
+  let currentOption = localStorage.getItem('kaios_option') || '0';
+
+  // Define falling emoji options
+  const itemsOptions = {
+    '1': '❤️', // Heart
+    '2': '🌸', // Flower
+    '3': '🌹', // Rose
+    '4': '🩲', // Panty
+    '5': '😘', // Kiss
+    '6': '🎂', // Cake
+    '7': '⭐',
+    '8': '✨',
+    '9': '🌟',
+    '10': '🌈',
+    '11': '💖',
+    '12': '🌻',
+    '13': '🍭',
+    '14': '🎉',
+    '15': '🎈',
+    '16': '🎁',
+    '17': '🎵',
+    '18': '🎶',
+    '19': '🎺',
+    '20': '🎸',
+  };
+
+  // Create overlay container for falling animations
   const overlay = document.createElement('div');
   overlay.style.position = 'fixed';
   overlay.style.top = 0;
@@ -28,9 +45,9 @@
   overlay.style.zIndex = 9999;
   document.body.appendChild(overlay);
 
-  // Function to start long press detection
+  // Handle keydown for long press detection
   function handleKeyDown(e) {
-    if (e.keyCode === BUTTON_CODE_5) {
+    if (e.key === TARGET_KEY) {
       if (pressTimer === null) {
         isLongPress = false;
         pressTimer = setTimeout(() => {
@@ -41,9 +58,9 @@
     }
   }
 
-  // Function to cancel long press detection
+  // Cancel long press if keyup before duration
   function handleKeyUp(e) {
-    if (e.keyCode === BUTTON_CODE_5) {
+    if (e.key === TARGET_KEY) {
       if (pressTimer !== null) {
         clearTimeout(pressTimer);
         pressTimer = null;
@@ -51,23 +68,62 @@
     }
   }
 
-  // Function to open prompt menu
+  // Function to open prompt menu for options
   function openMenu() {
-    const options = Array.from({ length: 11 }, (_, i) => `${i}`);
-    const choice = prompt(
-      'Select an option:\n' + options.join(' : '),
-      localStorage.getItem('kaios_option') || '0'
-    );
-    if (choice !== null && options.includes(choice)) {
-      localStorage.setItem('kaios_option', choice);
+    // Compose menu string
+    const menuString = `
+Select option:
+0 - Off
+00 - All
+000 - Random
+1-20 - Specific
+Current: ${currentOption}
+Enter choice:
+`;
+    // Show prompt
+    const choice = prompt(menuString, currentOption);
+    if (choice !== null) {
+      // Validate choice
+      const validChoices = ['0', '00', '000'];
+      const numChoice = parseInt(choice, 10);
+      if (validChoices.includes(choice)) {
+        currentOption = choice;
+        localStorage.setItem('kaios_option', currentOption);
+      } else if (!isNaN(numChoice) && numChoice >= 1 && numChoice <= 20) {
+        currentOption = choice;
+        localStorage.setItem('kaios_option', currentOption);
+      } else {
+        // Invalid choice, keep previous
+        alert('Invalid choice');
+      }
     }
   }
 
-  // Function to create falling item
+  // Function to create a falling item
   function createFallingItem() {
-    const itemData = FALLING_ITEMS[Math.floor(Math.random() * FALLING_ITEMS.length)];
-    const emoji = itemData.emoji;
+    let emoji = '';
 
+    // Determine emoji based on currentOption
+    if (currentOption === '0') {
+      // Off, do not create
+      return;
+    } else if (currentOption === '00') {
+      // All options
+      const keys = Object.keys(itemsOptions);
+      const randKey = keys[Math.floor(Math.random() * keys.length)];
+      emoji = itemsOptions[randKey];
+    } else if (currentOption === '000') {
+      // Random emoji
+      const keys = Object.keys(itemsOptions);
+      const randKey = keys[Math.floor(Math.random() * keys.length)];
+      emoji = itemsOptions[randKey];
+    } else {
+      // Specific number 1-20
+      const num = parseInt(currentOption, 10);
+      emoji = itemsOptions[String(num)] || '✨';
+    }
+
+    // Create DOM element
     const item = document.createElement('div');
     item.textContent = emoji;
     item.style.position = 'absolute';
@@ -82,20 +138,17 @@
     overlay.appendChild(item);
 
     // Animate falling
-    const duration = 3000 + Math.random() * 2000; // 3-5 seconds
+    const duration = 3000 + Math.random() * 2000; // 3-5 sec
     const endY = window.innerHeight + 50;
-
     const startTime = performance.now();
 
     function animate(currentTime) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const currentY = progress * endY;
-      const currentX = startX + Math.sin(progress * Math.PI * 4) * 50; // sway
-
+      const sway = Math.sin(progress * Math.PI * 4) * 50; // sway
       item.style.top = `${currentY}px`;
-      item.style.left = `${currentX}px`;
-
+      item.style.left = `${startX + sway}px`;
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
@@ -106,30 +159,26 @@
     requestAnimationFrame(animate);
   }
 
-  // Function to generate multiple falling items periodically
+  // Periodically create falling items
   let fallingInterval = null;
-
-  function startFallingAnimation() {
+  function startFalling() {
     if (fallingInterval === null) {
       fallingInterval = setInterval(createFallingItem, 300);
     }
   }
-
-  function stopFallingAnimation() {
+  function stopFalling() {
     if (fallingInterval !== null) {
       clearInterval(fallingInterval);
       fallingInterval = null;
     }
   }
 
-  // Initialize
+  // Initialize event listeners
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
 
-  // Optional: start the falling animation on page load
-  startFallingAnimation();
+  // Start falling animations
+  startFalling();
 
-  // Optional: toggle falling animation with a button or another event
-  // For example, start/stop on long press, or with a specific key
-
+  // Optionally, you can toggle falling animations with other events
 })();
