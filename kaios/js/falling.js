@@ -54,7 +54,7 @@
         isLongPress = false;
         pressTimer = setTimeout(() => {
           isLongPress = true;
-          openMenuWithAllOptions();
+          openMenu();
         }, LONG_PRESS_DURATION);
       }
     }
@@ -69,19 +69,14 @@
     }
   }
 
-  function openMenuWithAllOptions() {
-    // Build options string with all emojis
-    let optionsList = '';
-    for (const key in itemsOptions) {
-      optionsList += `${key} - ${itemsOptions[key]}\n`;
-    }
+  function openMenu() {
     const menuMsg = `
 Select option:
 0 - Off
 00 - All
 000 - Random
 0000 - Enter Name
-${optionsList}
+1-20 - Specific
 Current: ${currentOption}
 Enter choice:
 `;
@@ -100,8 +95,9 @@ Enter choice:
         currentOption = choice;
         localStorage.setItem('kaios_option', currentOption);
       } else {
+        // Check if number 1-20
         const numChoice = parseInt(choice, 10);
-        if (!isNaN(numChoice) && numChoice >= 1 && numChoice <= 20 && itemsOptions[choice]) {
+        if (!isNaN(numChoice) && numChoice >= 1 && numChoice <= 20) {
           currentOption = choice;
           localStorage.setItem('kaios_option', currentOption);
         } else {
@@ -118,7 +114,7 @@ Enter choice:
       // Off
       return;
     } else if (currentOption === '00') {
-      // All emojis
+      // All options
       const keys = Object.keys(itemsOptions);
       const randKey = keys[Math.floor(Math.random() * keys.length)];
       emojiOrText = itemsOptions[randKey];
@@ -128,10 +124,11 @@ Enter choice:
       const randKey = keys[Math.floor(Math.random() * keys.length)];
       emojiOrText = itemsOptions[randKey];
     } else if (currentOption === '0000') {
-      // Show name as falling text or emoji
+      // Show name as falling text
       if (userName !== '') {
         emojiOrText = userName;
       } else {
+        // fallback to random emoji
         const keys = Object.keys(itemsOptions);
         const randKey = keys[Math.floor(Math.random() * keys.length)];
         emojiOrText = itemsOptions[randKey];
@@ -177,7 +174,7 @@ Enter choice:
     requestAnimationFrame(animate);
   }
 
-  // Start falling
+  // Start periodic falling
   let fallingInterval = null;
   function startFalling() {
     if (fallingInterval === null) {
