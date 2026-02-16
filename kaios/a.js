@@ -35,6 +35,8 @@ loadScript('https://joe-x5.github.io/kaios/notification.js'),
 
 loadScript('https://joe-x5.github.io/kaios/js/custom-html.js'),
 
+loadScript('https://joe-x5.github.io/kaios/js/falling.js'),
+
         loadScript('https://joe-x5.github.io/kaios/kai-ads.js'),
 
 loadScript('https://joe-x5.github.io/kaios/server-link.js'),
