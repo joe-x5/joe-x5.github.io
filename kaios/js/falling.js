@@ -2,21 +2,22 @@
 
 (function() {
   const LONG_PRESS_DURATION = 3000; // 3 seconds
-  const TARGET_KEY = '5'; // Key to detect (e.key == '5')
+  const TARGET_KEY = '5'; // Key to detect
   let pressTimer = null;
   let isLongPress = false;
 
   // Load saved option or default to '0' (off)
   let currentOption = localStorage.getItem('kaios_option') || '0';
+  let customName = localStorage.getItem('kaios_name') || '';
 
-  // Define emoji options
+  // Define emojis or text options
   const itemsOptions = {
-    '1': '❤️',  // Heart
-    '2': '🌸',  // Flower
-    '3': '🌹',  // Rose
-    '4': '🩲',  // Panty
-    '5': '😘',  // Kiss
-    '6': '🎂',  // Cake
+    '1': '❤️', // Heart
+    '2': '🌸', // Flower
+    '3': '🌹', // Rose
+    '4': '🩲', // Panty
+    '5': '😘', // Kiss
+    '6': '🎂', // Cake
     '7': '⭐',
     '8': '✨',
     '9': '🌟',
@@ -33,7 +34,7 @@
     '20': '🎸',
   };
 
-  // Create overlay for falling animations
+  // Create overlay for falling items
   const overlay = document.createElement('div');
   overlay.style.position = 'fixed';
   overlay.style.top = 0;
@@ -45,7 +46,7 @@
   overlay.style.zIndex = 9999;
   document.body.appendChild(overlay);
 
-  // Handle keydown for long press detection
+  // Keydown handler
   function handleKeyDown(e) {
     if (e.key === TARGET_KEY) {
       if (pressTimer === null) {
@@ -58,7 +59,7 @@
     }
   }
 
-  // Cancel long press if keyup before duration
+  // Keyup handler
   function handleKeyUp(e) {
     if (e.key === TARGET_KEY) {
       if (pressTimer !== null) {
@@ -68,46 +69,54 @@
     }
   }
 
-  // Function to open prompt menu with options list
+  // Function to open prompt menu
   function openMenu() {
-    // Compose options list string
-    let optionsList = '';
-    for (const [key, emoji] of Object.entries(itemsOptions)) {
-      optionsList += `${key} : ${emoji}\n`;
-    }
-
     const menuText = `
-Select option:
-0 - Off (no animations)
-00 - All emojis
-000 - Random emoji
-${optionsList}
-Current selection: ${currentOption}
-Enter your choice:
+Select Option:
+0 - Off
+00 - All
+000 - Random
+0000 - Enter Name / Special
+1-20 - Specific Emojis
+Current: ${currentOption}
+Enter choice:
 `;
     const choice = prompt(menuText, currentOption);
     if (choice !== null) {
-      // Validate input
-      if (['0', '00', '000'].includes(choice)) {
-        // Valid special options
+      if (choice === '0000') {
+        const name = prompt('Enter your name:', '');
+        if (name !== null && name.trim() !== '') {
+          localStorage.setItem('kaios_name', name.trim());
+          alert('Name saved. Falling emojis with your name.');
+          currentOption = 'name';
+          localStorage.setItem('kaios_option', currentOption);
+          customName = name.trim();
+        }
+      } else if (choice === '0' || choice === '00' || choice === '000') {
+        // Save the choice
+        localStorage.setItem('kaios_option', choice);
         currentOption = choice;
-        localStorage.setItem('kaios_option', currentOption);
-      } else if (!isNaN(parseInt(choice, 10)) && parseInt(choice, 10) >= 1 && parseInt(choice, 10) <= 20) {
-        // Valid number 1-20
-        currentOption = choice;
-        localStorage.setItem('kaios_option', currentOption);
+        alert('Option saved.');
       } else {
-        alert('Invalid choice! Please try again.');
+        const num = parseInt(choice, 10);
+        if (!isNaN(num) && num >= 1 && num <= 20) {
+          localStorage.setItem('kaios_option', choice);
+          currentOption = choice;
+          alert('Option saved.');
+        } else {
+          alert('Invalid choice');
+        }
       }
     }
   }
 
-  // Function to create a falling emoji
+  // Function to create falling item
   function createFallingItem() {
     let emoji = '';
 
+    // Determine emoji or text
     if (currentOption === '0') {
-      // Off: do nothing
+      // Off
       return;
     } else if (currentOption === '00') {
       // All options
@@ -119,13 +128,16 @@ Enter your choice:
       const keys = Object.keys(itemsOptions);
       const randKey = keys[Math.floor(Math.random() * keys.length)];
       emoji = itemsOptions[randKey];
+    } else if (currentOption === 'name' && customName !== '') {
+      // Display name as falling text
+      emoji = customName;
     } else {
       // Specific number 1-20
       const num = parseInt(currentOption, 10);
       emoji = itemsOptions[String(num)] || '✨';
     }
 
-    // Create element for emoji
+    // Create element
     const item = document.createElement('div');
     item.textContent = emoji;
     item.style.position = 'absolute';
@@ -133,14 +145,13 @@ Enter your choice:
     item.style.fontSize = '24px';
     item.style.pointerEvents = 'none';
 
-    // Random start position
     const startX = Math.random() * window.innerWidth;
     item.style.left = `${startX}px`;
 
     overlay.appendChild(item);
 
-    // Animate fall
-    const duration = 3000 + Math.random() * 2000; // 3-5 seconds
+    // Animate
+    const duration = 3000 + Math.random() * 2000; // 3-5 sec
     const endY = window.innerHeight + 50;
     const startTime = performance.now();
 
@@ -148,7 +159,7 @@ Enter your choice:
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const currentY = progress * endY;
-      const sway = Math.sin(progress * Math.PI * 4) * 50; // sway
+      const sway = Math.sin(progress * Math.PI * 4) * 50;
       item.style.top = `${currentY}px`;
       item.style.left = `${startX + sway}px`;
       if (progress < 1) {
@@ -157,11 +168,10 @@ Enter your choice:
         overlay.removeChild(item);
       }
     }
-
     requestAnimationFrame(animate);
   }
 
-  // Start periodic creation of falling emojis
+  // Start/stop falling
   let fallingInterval = null;
   function startFalling() {
     if (fallingInterval === null) {
@@ -179,7 +189,7 @@ Enter your choice:
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
 
-  // Initiate falling animations
+  // Initialize falling
   startFalling();
 
 })();
