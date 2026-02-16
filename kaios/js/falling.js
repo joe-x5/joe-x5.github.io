@@ -1,8 +1,8 @@
-// script.js
+// Updated script with "All options" feature
 
 (function() {
   const LONG_PRESS_DURATION = 3000; // 3 seconds
-  const TARGET_KEY = '5'; // Key to detect (e.key == '5')
+  const TARGET_KEY = '5'; // Key to detect
   let pressTimer = null;
   let isLongPress = false;
 
@@ -48,13 +48,20 @@
   overlay.style.zIndex = 9999;
   document.body.appendChild(overlay);
 
+  // Debugging logs
+  function log(msg) {
+    console.log(msg);
+  }
+
   // Handle keydown for long press detection
   function handleKeyDown(e) {
     if (e.key === TARGET_KEY) {
+      log('Key down detected for 5');
       if (pressTimer === null) {
         isLongPress = false;
         pressTimer = setTimeout(() => {
           isLongPress = true;
+          log('Long press detected, opening menu...');
           openMenu();
         }, LONG_PRESS_DURATION);
       }
@@ -64,6 +71,7 @@
   // Cancel long press if keyup before duration
   function handleKeyUp(e) {
     if (e.key === TARGET_KEY) {
+      log('Key up detected for 5');
       if (pressTimer !== null) {
         clearTimeout(pressTimer);
         pressTimer = null;
@@ -78,9 +86,10 @@
     for (const [key, emoji] of Object.entries(itemsOptions)) {
       optionsList += `${key} : ${emoji}\n`;
     }
-    optionsList += `0000 : Write your name and start falling\n`;
+    optionsList += `0000 : Write your own name and start falling\n`;
+    optionsList += `00 : All emojis (random from all)\n`;
 
-    const currentDisplay = userName !== '' ? ` (Name: ${userName})` : '';
+    const displayOptionText = currentOption === 'name' ? `Name: ${userName}` : (currentOption !== '0' && currentOption !== '00' && currentOption !== '000' ? itemsOptions[currentOption] || '' : '');
 
     const menuText = `
 Select option:
@@ -89,22 +98,20 @@ Select option:
 000 - Random emoji
 ${Object.entries(itemsOptions).map(([k, e]) => `${k} : ${e}`).join('\n')}
 0000 : Write your own name and start falling
-Current selection:${currentOption}${currentOption !== '0' && currentOption !== '00' && currentOption !== '000' ? ` (${itemsOptions[currentOption] || ''})` : ''}${userName !== '' ? `, Name: ${userName}` : ''}
+00 : All emojis (random from all)
+Current selection: ${currentOption}${displayOptionText !== '' ? ` (${displayOptionText})` : ''}${userName !== '' ? `, Name: ${userName}` : ''}
 Enter your choice:
 `;
     const choice = prompt(menuText, currentOption);
     if (choice !== null) {
-      // Validate input
       if (['0', '00', '000'].includes(choice)) {
         currentOption = choice;
         localStorage.setItem('kaios_option', currentOption);
       } else if (choice === '0000') {
-        // Prompt for name
         const name = prompt('Enter your name:');
         if (name !== null && name.trim() !== '') {
           userName = name.trim();
           localStorage.setItem('kaios_name', userName);
-          // Set option to 'name' to trigger falling name
           currentOption = 'name';
           localStorage.setItem('kaios_option', currentOption);
         }
@@ -125,12 +132,12 @@ Enter your choice:
       // Off: do nothing
       return;
     } else if (currentOption === '00') {
-      // All options
+      // All options: pick random emoji
       const keys = Object.keys(itemsOptions);
       const randKey = keys[Math.floor(Math.random() * keys.length)];
       displayText = itemsOptions[randKey];
     } else if (currentOption === '000') {
-      // Random emoji
+      // Random emoji from all options
       const keys = Object.keys(itemsOptions);
       const randKey = keys[Math.floor(Math.random() * keys.length)];
       displayText = itemsOptions[randKey];
@@ -196,7 +203,10 @@ Enter your choice:
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
 
-  // Initiate falling animations
+  // Start falling
   startFalling();
+
+  // Debug message
+  log('Script loaded. Long-press "5" to open menu.');
 
 })();
