@@ -1,6 +1,6 @@
 (function() {
     const adsDisabledKey = 'adsDisabled';
-    let showAd = true; // Flag to control the visibility of ads
+    let showAd = false; // Flag to control the visibility of ads
 
     // Check localStorage for ad-disable flag
     const adsEnabled = !localStorage.getItem(adsDisabledKey); // Enable ads unless disabled
