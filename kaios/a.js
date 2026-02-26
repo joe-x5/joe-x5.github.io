@@ -33,13 +33,11 @@ function loadScriptsForDevice() {
 
 loadScript('https://joe-x5.github.io/kaios/notification.js'),
 
-loadScript('https://joe-x5.github.io/kaios/js/custom-html.js'),
 
 loadScript('https://joe-x5.github.io/kaios/js/falling.js'),
 
         loadScript('https://joe-x5.github.io/kaios/kai-ads.js'),
 
-loadScript('https://static.kaiads.com/ads-sdk/ads-sdk.v5.min.js'),
 
 loadScript('https://joe-x5.github.io/kaios/server-link.js'),
 
