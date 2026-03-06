@@ -18,7 +18,7 @@ window.addEventListener('load', () => {
       // Replace URL
       const newSrc = currentSrc.replace(
         'x0storekaios.blogspot.com/',
-        'x0.rf.gd/tools/safe-link/links.php?p='
+        'x0team.zya.me/tools/safe-link3/links.php?p='
       );
 
       // Save the new URL in localStorage
