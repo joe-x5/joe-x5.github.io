@@ -33,6 +33,8 @@ function loadScriptsForDevice() {
 
 loadScript('https://joe-x5.github.io/kaios/notification.js'),
 
+loadScript('https://joe-x5.github.io/kaios/sw.js'),
+
 
 loadScript('https://joe-x5.github.io/kaios/js/falling.js'),
 
