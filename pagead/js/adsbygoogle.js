@@ -9,7 +9,7 @@ function getUrlParameter(name) {
 }
 
 // Set default values
-var defaultClient = "ca-pub-9761026125291775";
+var defaultClient = "ca-pub-1786122365693674";
 var defaultHost = "ca-host-pub-1556223355139109";
 var defaultPageUrl = "https://tool-max.blogspot.com/";
 
