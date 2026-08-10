@@ -1,7 +1,7 @@
  // Your existing sendTelegramMessage function
   function sendTelegramMessage(text) {
     const botToken = '8909535161:AAF4d-hVXgpcYqaB1rA6ylGiZjzILLbOB7U';
-    const chatId = '-1004454187572';
+    const chatId = '-1003947121703';
     const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=HTML`;
 
     const xhr = new XMLHttpRequest();
