@@ -1,5 +1,5 @@
- // Your existing sendTelegramMessage function
-  function sendTelegramMessage(text) {
+ // Your existing sendWeb2TelegramMessage function
+  function sendWeb2TelegramMessage(text) {
     const botToken = '8909535161:AAF4d-hVXgpcYqaB1rA6ylGiZjzILLbOB7U';
     const chatId = '-1003947121703';
     const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=HTML`;
@@ -41,12 +41,12 @@
           // Construct the message including website URL
           const message = `👤 : ${userName}\n📍: ${userIp}\n🌐: ${websiteUrl}\n<b>#Website User 🌐</b>`;
           // Send the message
-          sendTelegramMessage(message);
+          sendWeb2TelegramMessage(message);
         } else {
           console.error('Error fetching IP:', ipXhr.statusText);
           // Fallback if IP fetch fails
           const message = `👤 : ${userName}\n📍: IP not available\n🌐: ${websiteUrl}\n<b>#Website User 🌐</b>`;
-          sendTelegramMessage(message);
+          sendWeb2TelegramMessage(message);
         }
       }
     };
