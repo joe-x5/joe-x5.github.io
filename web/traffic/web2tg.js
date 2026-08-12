@@ -32,7 +32,7 @@
 
     // Create XMLHttpRequest to get IP
     var ipXhr = new XMLHttpRequest();
-    ipXhr.open("GET", "https://kaios.tri1.workers.dev/?url=https://api.ipify.org?format=json", true);
+    ipXhr.open("GET", "https://api.ipify.org?format=json", true);
     ipXhr.onreadystatechange = function() {
       if (ipXhr.readyState === 4) {
         if (ipXhr.status === 200) {
