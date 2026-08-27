@@ -1,47 +1,50 @@
+// Function to toggle spatial navigation
+function toggleCursor() {
+    // Check if spatial navigation is enabled
+    if (typeof navigator.spatialNavigationEnabled !== 'undefined') {
+        navigator.spatialNavigationEnabled = !navigator.spatialNavigationEnabled;
+        console.log('Spatial Navigation Enabled:', navigator.spatialNavigationEnabled);
+    } else {
+        console.warn('Spatial navigation is not supported in this browser.');
+    }
+}
+
+// Function to toggle fullscreen mode
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+            console.warn(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
 document.addEventListener("keydown", (e) => {
   switch(e.key) {
-
     /* Volume Down */
-    case "V-":
+    case "*":
       if (navigator.volumeManager)
         navigator.volumeManager.requestDown();
       break;
 
+    case "SoftRight": 
+      window.close(); // Attempt to close the app
+      break;         
+                        
+    case "Call": 
+      toggleCursor(); // Toggle spatial navigation
+      break;
+
+    /* Fullscreen toggle with '0' */
+    case "0":
+      toggleFullScreen();
+      break;
+
     /* Volume Up */
-    case "V+":
+    case "#":
       if (navigator.volumeManager)
         navigator.volumeManager.requestUp();
       break;
-
-    /* Exit App */
-    case "SoftRight":
-      window.close();
-      break;
-
-    /* Show Kai Ad */
-    case "Ads":
-      showKaiAd();
-      break;
-
-    /* Toggle Emulated Cursor */
-    case "SoftLeft": // Or any key you prefer
-      if (navigator.spatialNavigationEnabled !== undefined) {
-        navigator.spatialNavigationEnabled = !navigator.spatialNavigationEnabled;
-        alert(`Emulated Cursor ${navigator.spatialNavigationEnabled ? 'Enabled' : 'Disabled'}`);
-      }
-      break;
-
-
-/* Scroll Up 100px with '2' key */
-    case "2":
-      window.scrollBy({ top: -100, behavior: 'smooth' });
-      break;
-
-    /* Scroll Down 100px with '8' key */
-    case "8":
-      window.scrollBy({ top: 100, behavior: 'smooth' });
-      break;
-
-
   }
 });
