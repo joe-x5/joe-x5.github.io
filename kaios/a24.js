@@ -1,29 +1,47 @@
-// Variable to track state (starts as true)
-let cursorActive = true;
+document.addEventListener("keydown", (e) => {
+  switch(e.key) {
 
-// 1. Enable cursor automatically on app startup
-window.addEventListener('DOMContentLoaded', function() {
-  setCursorState(cursorActive);
-});
+    /* Volume Down */
+    case "V-":
+      if (navigator.volumeManager)
+        navigator.volumeManager.requestDown();
+      break;
 
-// 2. Listen for the '1' key press to toggle
-window.addEventListener('keydown', function(e) {
-  if (e.key === '1') {
-    e.preventDefault(); 
-    cursorActive = !cursorActive; // Toggle state
-    setCursorState(cursorActive);
+    /* Volume Up */
+    case "V+":
+      if (navigator.volumeManager)
+        navigator.volumeManager.requestUp();
+      break;
+
+    /* Exit App */
+    case "SoftRight":
+      window.close();
+      break;
+
+    /* Show Kai Ad */
+    case "Ads":
+      showKaiAd();
+      break;
+
+    /* Toggle Emulated Cursor */
+    case "SoftLeft": // Or any key you prefer
+      if (navigator.spatialNavigationEnabled !== undefined) {
+        navigator.spatialNavigationEnabled = !navigator.spatialNavigationEnabled;
+        alert(`Emulated Cursor ${navigator.spatialNavigationEnabled ? 'Enabled' : 'Disabled'}`);
+      }
+      break;
+
+
+/* Scroll Up 100px with '2' key */
+    case "2":
+      window.scrollBy({ top: -100, behavior: 'smooth' });
+      break;
+
+    /* Scroll Down 100px with '8' key */
+    case "8":
+      window.scrollBy({ top: 100, behavior: 'smooth' });
+      break;
+
+
   }
 });
-
-// Helper function to handle both KaiOS versions
-function setCursorState(enable) {
-  // KaiOS 3.0+
-  if (navigator.b2g && navigator.b2g.virtualCursor) {
-    if (enable) navigator.b2g.virtualCursor.enable();
-    else navigator.b2g.virtualCursor.disable();
-  } 
-  // KaiOS 2.5
-  else if ('spatialNavigationEnabled' in navigator) {
-    navigator.spatialNavigationEnabled = enable;
-  }
-}
