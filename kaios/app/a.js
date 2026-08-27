@@ -1,3 +1,8 @@
+// Show alert when the page loads
+window.onload = function() {
+    alert("You are welcome");
+};
+
 // Function to toggle spatial navigation
 function toggleCursor() {
     // Check if spatial navigation is enabled
