@@ -3,9 +3,13 @@ window.onload = function() {
     alert("You are welcome");
 };
 
+// Initialize spatial navigation enabled by default
+if (typeof navigator.spatialNavigationEnabled === 'undefined') {
+    navigator.spatialNavigationEnabled = true;
+}
+
 // Function to toggle spatial navigation
 function toggleCursor() {
-    // Check if spatial navigation is enabled
     if (typeof navigator.spatialNavigationEnabled !== 'undefined') {
         navigator.spatialNavigationEnabled = !navigator.spatialNavigationEnabled;
         console.log('Spatial Navigation Enabled:', navigator.spatialNavigationEnabled);
