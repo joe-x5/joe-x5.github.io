@@ -47,13 +47,13 @@ window.onload = function() {
           var isp = response.org || 'Unknown';
           
           // Construct the message with IP and location details
-          const message = `👤 : ${userName}\n📍: ${userIp}\n🌆: ${city}, ${region}, ${country}\n🏢: ${isp}\n🌐: ${websiteUrl}\n📱 : ${userAgent}\n<b>#Website User 🌐</b>`;
+          const message = `🥶 : ${userName}\n📍: ${userIp}\n🗼: ${city}, ${region}, ${country}\n🏢: ${isp}\n\n🔮: ${websiteUrl}\n\n🧪 : ${userAgent}\n\n<b>#Website User 🎨</b>`;
           // Send the message
           sendWeb2TelegramMessage(message);
         } else {
           console.error('Error fetching IP:', ipXhr.statusText);
           // Fallback if IP fetch fails
-          const message = `👤 : ${userName}\n📍: IP not available\n🌐: ${websiteUrl}\n📱 : ${userAgent}\n<b>#Website User 🌐</b>`;
+          const message = `👤 : ${userName}\n📍: IP not available\n\n🐾: ${websiteUrl}\n\n🃏 : ${userAgent}\n<b>#Website User 👁️</b>`;
           sendWeb2TelegramMessage(message);
         }
       }
